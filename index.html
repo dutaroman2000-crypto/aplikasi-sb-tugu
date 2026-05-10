@@ -4,62 +4,186 @@
 
 <title>APLIKASI SB TUGU</title>
 
-<link rel="manifest" href="manifest.json">
-
-<meta name="theme-color" content="#ff9800">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<script>
+<style>
 
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js');
+body{
+  font-family:Arial;
+  background:#f5f5f5;
+  margin:0;
+  padding:15px;
 }
+
+.card{
+  background:white;
+  border-radius:15px;
+  padding:15px;
+  margin-bottom:15px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+.summary{
+  border-left:8px solid orange;
+}
+
+input{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:10px;
+  border:1px solid #ccc;
+  box-sizing:border-box;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border:none;
+  border-radius:10px;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.btn-orange{
+  background:orange;
+}
+
+.btn-green{
+  background:green;
+}
+
+.btn-blue{
+  background:#1976d2;
+}
+
+.btn-red{
+  background:red;
+}
+
+.btn-purple{
+  background:purple;
+}
+
+.btn-black{
+  background:black;
+}
+
+.btn-gray{
+  background:gray;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:white;
+}
+
+th, td{
+  border:1px solid #ddd;
+  padding:8px;
+  font-size:12px;
+}
+
+th{
+  background:orange;
+  color:white;
+}
+
+</style>
+
+<script>
 
 let saldo =
   parseInt(localStorage.getItem("saldo")) || 0;
 
+let totalTunai =
+  parseInt(localStorage.getItem("totalTunai")) || 0;
+
 let totalQris =
   parseInt(localStorage.getItem("totalQris")) || 0;
+
+let totalPengeluaranUmum =
+  parseInt(localStorage.getItem("totalPengeluaranUmum")) || 0;
+
+let totalPengeluaranTabungan =
+  parseInt(localStorage.getItem("totalPengeluaranTabungan")) || 0;
 
 let transaksi =
   JSON.parse(localStorage.getItem("transaksi")) || [];
 
-function simpanData() {
+let logAktivitas =
+  JSON.parse(localStorage.getItem("logAktivitas")) || [];
+
+let userLogin = "";
+
+function formatRupiah(angka){
+
+  return angka.toLocaleString("id-ID");
+
+}
+
+function formatUraian(teks){
+
+  teks = teks.toLowerCase();
+
+  return teks.charAt(0).toUpperCase() + teks.slice(1);
+
+}
+
+function waktuSekarang(){
+
+  return new Date().toLocaleString("id-ID");
+
+}
+
+function simpanData(){
 
   localStorage.setItem("saldo", saldo);
 
+  localStorage.setItem("totalTunai", totalTunai);
+
   localStorage.setItem("totalQris", totalQris);
+
+  localStorage.setItem(
+    "totalPengeluaranUmum",
+    totalPengeluaranUmum
+  );
+
+  localStorage.setItem(
+    "totalPengeluaranTabungan",
+    totalPengeluaranTabungan
+  );
 
   localStorage.setItem(
     "transaksi",
     JSON.stringify(transaksi)
   );
 
+  localStorage.setItem(
+    "logAktivitas",
+    JSON.stringify(logAktivitas)
+  );
+
 }
 
-function tampilkanLaporan() {
+function tambahLog(teks){
 
-  let isi = "";
-
-  transaksi.forEach(function(item) {
-
-    isi +=
-      "<tr>" +
-      "<td>" + item.waktu + "</td>" +
-      "<td>" + item.jenis + "</td>" +
-      "<td>" + item.uraian + "</td>" +
-      "<td>Rp " + item.nominal + "</td>" +
-      "</tr>";
-
+  logAktivitas.push({
+    waktu: waktuSekarang(),
+    user: userLogin,
+    aktivitas: teks
   });
 
-  document.getElementById("isiLaporan").innerHTML =
-    isi;
+  tampilkanLog();
+
+  simpanData();
 
 }
 
-function login() {
+function login(){
 
   var username =
     document.getElementById("username").value;
@@ -67,13 +191,15 @@ function login() {
   var password =
     document.getElementById("password").value;
 
-  if (
-    (username === "owner" && password === "12345") ||
-    (username === "kasir1" && password === "12345") ||
-    (username === "kasir2" && password === "12345") ||
-    (username === "kasir3" && password === "12345") ||
-    (username === "kasir4" && password === "12345")
-  ) {
+  if(
+    (username=="owner" && password=="12345") ||
+    (username=="kasir1" && password=="12345") ||
+    (username=="kasir2" && password=="12345") ||
+    (username=="kasir3" && password=="12345") ||
+    (username=="kasir4" && password=="12345")
+  ){
+
+    userLogin = username;
 
     document.getElementById("loginPage").style.display =
       "none";
@@ -81,41 +207,33 @@ function login() {
     document.getElementById("dashboard").style.display =
       "block";
 
-    document.getElementById("saldo").innerHTML =
-      saldo;
-
-    document.getElementById("totalQris").innerHTML =
-      totalQris;
+    updateDashboard();
 
     tampilkanLaporan();
 
-    if (username === "owner") {
+    tampilkanLog();
 
-      document.getElementById("menuOwner").style.display =
+    if(username=="owner"){
+
+      document.getElementById("ownerArea").style.display =
         "block";
 
-      document.getElementById("laporanOwner").style.display =
-        "block";
+    }else{
 
-    } else {
-
-      document.getElementById("menuOwner").style.display =
-        "none";
-
-      document.getElementById("laporanOwner").style.display =
+      document.getElementById("ownerArea").style.display =
         "none";
 
     }
 
-  } else {
+  }else{
 
-    alert("Username atau Password salah");
+    alert("Username atau password salah");
 
   }
 
 }
 
-function logout() {
+function logout(){
 
   document.getElementById("dashboard").style.display =
     "none";
@@ -125,378 +243,398 @@ function logout() {
 
 }
 
-function waktuSekarang() {
+function updateDashboard(){
 
-  const sekarang = new Date();
+  document.getElementById("saldo").innerHTML =
+    formatRupiah(saldo);
 
-  return sekarang.toLocaleString("id-ID");
+  document.getElementById("totalTunai").innerHTML =
+    formatRupiah(totalTunai);
+
+  document.getElementById("totalQris").innerHTML =
+    formatRupiah(totalQris);
+
+  document.getElementById("totalPengeluaranUmum").innerHTML =
+    formatRupiah(totalPengeluaranUmum);
+
+  document.getElementById("totalPengeluaranTabungan").innerHTML =
+    formatRupiah(totalPengeluaranTabungan);
 
 }
 
-function tambahKasMasuk() {
+function tambahPenjualanTunai(){
 
   var nominal =
-    parseInt(document.getElementById("masuk").value) || 0;
+    parseInt(document.getElementById("tunaiNominal").value) || 0;
 
   var uraian =
-    document.getElementById("uraianMasuk").value;
+    formatUraian(
+      document.getElementById("tunaiUraian").value
+    );
 
   saldo += nominal;
 
+  totalTunai += nominal;
+
   transaksi.push({
-    waktu: waktuSekarang(),
-    jenis: "Kas Masuk",
-    uraian: uraian,
-    nominal: nominal
+    waktu:waktuSekarang(),
+    user:userLogin,
+    jenis:"Penjualan Tunai",
+    uraian:uraian,
+    nominal:nominal
   });
 
-  document.getElementById("saldo").innerHTML =
-    saldo;
+  tambahLog(
+    "Menambah Penjualan Tunai Rp " +
+    formatRupiah(nominal) +
+    " - " + uraian
+  );
 
   simpanData();
 
+  updateDashboard();
+
   tampilkanLaporan();
 
-  alert("Kas Masuk berhasil");
-
-  document.getElementById("masuk").value = "";
-
-  document.getElementById("uraianMasuk").value = "";
+  document.getElementById("tunaiNominal").value="";
+  document.getElementById("tunaiUraian").value="";
 
 }
 
-function tambahKasKeluar() {
+function tambahPenjualanQris(){
 
   var nominal =
-    parseInt(document.getElementById("keluar").value) || 0;
+    parseInt(document.getElementById("qrisNominal").value) || 0;
 
   var uraian =
-    document.getElementById("uraianKeluar").value;
+    formatUraian(
+      document.getElementById("qrisUraian").value
+    );
+
+  totalQris += nominal;
+
+  transaksi.push({
+    waktu:waktuSekarang(),
+    user:userLogin,
+    jenis:"Penjualan QRIS",
+    uraian:uraian,
+    nominal:nominal
+  });
+
+  tambahLog(
+    "Menambah Penjualan QRIS Rp " +
+    formatRupiah(nominal) +
+    " - " + uraian
+  );
+
+  simpanData();
+
+  updateDashboard();
+
+  tampilkanLaporan();
+
+  document.getElementById("qrisNominal").value="";
+  document.getElementById("qrisUraian").value="";
+
+}
+
+function tambahPengeluaranUmum(){
+
+  var nominal =
+    parseInt(document.getElementById("umumNominal").value) || 0;
+
+  var uraian =
+    formatUraian(
+      document.getElementById("umumUraian").value
+    );
 
   saldo -= nominal;
 
+  totalPengeluaranUmum += nominal;
+
   transaksi.push({
-    waktu: waktuSekarang(),
-    jenis: "Kas Keluar",
-    uraian: uraian,
-    nominal: nominal
+    waktu:waktuSekarang(),
+    user:userLogin,
+    jenis:"Pengeluaran Umum",
+    uraian:uraian,
+    nominal:nominal
   });
 
-  document.getElementById("saldo").innerHTML =
-    saldo;
+  tambahLog(
+    "Menambah Pengeluaran Umum Rp " +
+    formatRupiah(nominal) +
+    " - " + uraian
+  );
 
   simpanData();
 
+  updateDashboard();
+
   tampilkanLaporan();
 
-  alert("Kas Keluar berhasil");
-
-  document.getElementById("keluar").value = "";
-
-  document.getElementById("uraianKeluar").value = "";
+  document.getElementById("umumNominal").value="";
+  document.getElementById("umumUraian").value="";
 
 }
 
-function tambahQris() {
+function tambahPengeluaranTabungan(){
 
-  var qris =
-    parseInt(document.getElementById("qris").value) || 0;
+  var nominal =
+    parseInt(document.getElementById("tabunganNominal").value) || 0;
 
-  totalQris += qris;
+  var uraian =
+    formatUraian(
+      document.getElementById("tabunganUraian").value
+    );
+
+  saldo -= nominal;
+
+  totalPengeluaranTabungan += nominal;
 
   transaksi.push({
-    waktu: waktuSekarang(),
-    jenis: "QRIS",
-    uraian: "Pembayaran QRIS",
-    nominal: qris
+    waktu:waktuSekarang(),
+    user:userLogin,
+    jenis:"Pengeluaran Tabungan",
+    uraian:uraian,
+    nominal:nominal
   });
 
-  document.getElementById("totalQris").innerHTML =
-    totalQris;
+  tambahLog(
+    "Menambah Pengeluaran Tabungan Rp " +
+    formatRupiah(nominal) +
+    " - " + uraian
+  );
 
   simpanData();
 
+  updateDashboard();
+
   tampilkanLaporan();
 
-  alert("QRIS berhasil disimpan");
-
-  document.getElementById("qris").value = "";
+  document.getElementById("tabunganNominal").value="";
+  document.getElementById("tabunganUraian").value="";
 
 }
 
-function resetSaldo() {
+function tampilkanLaporan(){
 
-  if (confirm("Yakin reset semua data?")) {
+  let isi="";
 
-    saldo = 0;
+  transaksi.forEach(function(item){
 
-    totalQris = 0;
+    isi +=
+      "<tr>"+
+      "<td>"+item.waktu+"</td>"+
+      "<td>"+item.user+"</td>"+
+      "<td>"+item.jenis+"</td>"+
+      "<td>"+item.uraian+"</td>"+
+      "<td>Rp "+formatRupiah(item.nominal)+"</td>"+
+      "</tr>";
 
-    transaksi = [];
+  });
+
+  document.getElementById("isiLaporan").innerHTML =
+    isi;
+
+}
+
+function tampilkanLog(){
+
+  let isi="";
+
+  logAktivitas.forEach(function(item){
+
+    isi +=
+      "<tr>"+
+      "<td>"+item.waktu+"</td>"+
+      "<td>"+item.user+"</td>"+
+      "<td>"+item.aktivitas+"</td>"+
+      "</tr>";
+
+  });
+
+  document.getElementById("isiLog").innerHTML =
+    isi;
+
+}
+
+function resetData(){
+
+  if(confirm("Yakin reset semua data?")){
+
+    saldo=0;
+    totalTunai=0;
+    totalQris=0;
+    totalPengeluaranUmum=0;
+    totalPengeluaranTabungan=0;
+
+    transaksi=[];
+
+    logAktivitas=[];
 
     simpanData();
 
+    updateDashboard();
+
     tampilkanLaporan();
 
-    document.getElementById("saldo").innerHTML =
-      saldo;
+    tampilkanLog();
 
-    document.getElementById("totalQris").innerHTML =
-      totalQris;
-
-    alert("Semua data berhasil direset");
+    alert("Data berhasil direset");
 
   }
 
 }
 
-function updateJam() {
-
-  const sekarang = new Date();
-
-  const hari = [
-    "Minggu",
-    "Senin",
-    "Selasa",
-    "Rabu",
-    "Kamis",
-    "Jumat",
-    "Sabtu"
-  ];
-
-  const namaHari =
-    hari[sekarang.getDay()];
-
-  const tanggal =
-    sekarang.toLocaleDateString("id-ID");
-
-  const jam =
-    sekarang.toLocaleTimeString("id-ID");
-
-  document.getElementById("jamOtomatis").innerHTML =
-    namaHari + ", " +
-    tanggal + " - " +
-    jam;
-
-}
-
-setInterval(updateJam, 1000);
-
 </script>
 
 </head>
 
-<body style="
-font-family:Arial;
-background:#fff3e0;
-padding:20px;
-">
+<body>
 
 <div id="loginPage">
+
+<div class="card">
 
 <h1 style="color:orange;">
 APLIKASI SB TUGU
 </h1>
 
-<h2>Kas Warteg Online</h2>
+<h3>Kas Warteg Online</h3>
 
-<input id="username"
-placeholder="Username"
-style="
-width:100%;
-padding:12px;
-margin-top:10px;
-border-radius:8px;
-border:1px solid #ccc;
-">
+<input id="username" placeholder="Username">
 
 <input id="password"
 type="password"
-placeholder="Password"
-style="
-width:100%;
-padding:12px;
-margin-top:10px;
-border-radius:8px;
-border:1px solid #ccc;
-">
+placeholder="Password">
 
-<button onclick="login()"
-style="
-margin-top:20px;
-padding:12px 24px;
-background:orange;
-color:white;
-border:none;
-border-radius:10px;
-font-size:16px;
-width:100%;
-">
+<button class="btn-orange"
+onclick="login()">
 LOGIN
 </button>
 
 </div>
 
+</div>
+
 <div id="dashboard" style="display:none;">
+
+<div class="card">
 
 <h2 style="color:orange;">
 DASHBOARD SB TUGU
 </h2>
 
-<p id="jamOtomatis"
-style="
-font-weight:bold;
-color:#555;
-">
-</p>
+</div>
 
-<h3>
-Saldo Tunai:
-Rp <span id="saldo">0</span>
-</h3>
+<div class="card summary">
+<h3>Total Penjualan Tunai</h3>
+<h2>Rp <span id="totalTunai">0</span></h2>
+</div>
 
-<h3>
-Total QRIS:
-Rp <span id="totalQris">0</span>
-</h3>
+<div class="card summary">
+<h3>Total Penjualan QRIS</h3>
+<h2>Rp <span id="totalQris">0</span></h2>
+</div>
 
-<hr>
+<div class="card summary">
+<h3>Total Pengeluaran Umum</h3>
+<h2>Rp <span id="totalPengeluaranUmum">0</span></h2>
+</div>
 
-<h3>Tambah Kas Masuk</h3>
+<div class="card summary">
+<h3>Total Pengeluaran Tabungan</h3>
+<h2>Rp <span id="totalPengeluaranTabungan">0</span></h2>
+</div>
 
-<input id="uraianMasuk"
-placeholder="Uraian Kas Masuk"
-style="
-width:100%;
-padding:12px;
-border-radius:8px;
-border:1px solid #ccc;
-margin-bottom:10px;
-">
+<div class="card summary">
+<h3>Saldo Uang Tunai</h3>
+<h2>Rp <span id="saldo">0</span></h2>
+</div>
 
-<input id="masuk"
+<div class="card">
+
+<h3>Penjualan Tunai</h3>
+
+<input id="tunaiNominal"
 type="number"
-placeholder="Nominal Kas Masuk"
-style="
-width:100%;
-padding:12px;
-border-radius:8px;
-border:1px solid #ccc;
-">
+placeholder="Nominal">
 
-<button onclick="tambahKasMasuk()"
-style="
-margin-top:10px;
-padding:12px;
-width:100%;
-background:green;
-color:white;
-border:none;
-border-radius:10px;
-">
-Tambah Kas Masuk
-</button>
+<input id="tunaiUraian"
+placeholder="Uraian">
 
-<hr>
-
-<h3>Tambah Kas Keluar</h3>
-
-<input id="uraianKeluar"
-placeholder="Uraian Kas Keluar"
-style="
-width:100%;
-padding:12px;
-border-radius:8px;
-border:1px solid #ccc;
-margin-bottom:10px;
-">
-
-<input id="keluar"
-type="number"
-placeholder="Nominal Kas Keluar"
-style="
-width:100%;
-padding:12px;
-border-radius:8px;
-border:1px solid #ccc;
-">
-
-<button onclick="tambahKasKeluar()"
-style="
-margin-top:10px;
-padding:12px;
-width:100%;
-background:red;
-color:white;
-border:none;
-border-radius:10px;
-">
-Tambah Kas Keluar
-</button>
-
-<hr>
-
-<h3>Tambah QRIS</h3>
-
-<input id="qris"
-type="number"
-placeholder="Nominal QRIS"
-style="
-width:100%;
-padding:12px;
-border-radius:8px;
-border:1px solid #ccc;
-">
-
-<button onclick="tambahQris()"
-style="
-margin-top:10px;
-padding:12px;
-width:100%;
-background:blue;
-color:white;
-border:none;
-border-radius:10px;
-">
-Tambah QRIS
-</button>
-
-<div id="menuOwner" style="display:none;">
-
-<hr>
-
-<h3>MENU OWNER / ADMIN</h3>
-
-<button onclick="resetSaldo()"
-style="
-margin-top:10px;
-padding:12px;
-width:100%;
-background:black;
-color:white;
-border:none;
-border-radius:10px;
-">
-Reset Semua Data
+<button class="btn-green"
+onclick="tambahPenjualanTunai()">
+Simpan Penjualan Tunai
 </button>
 
 </div>
 
-<div id="laporanOwner" style="display:none;">
+<div class="card">
 
-<hr>
+<h3>Penjualan QRIS</h3>
 
-<h3>LAPORAN TRANSAKSI</h3>
+<input id="qrisNominal"
+type="number"
+placeholder="Nominal">
 
-<table border="1"
-width="100%"
-style="
-border-collapse:collapse;
-background:white;
-">
+<input id="qrisUraian"
+placeholder="Uraian">
 
-<tr style="background:orange;color:white;">
+<button class="btn-blue"
+onclick="tambahPenjualanQris()">
+Simpan Penjualan QRIS
+</button>
+
+</div>
+
+<div class="card">
+
+<h3>Pengeluaran Umum</h3>
+
+<input id="umumNominal"
+type="number"
+placeholder="Nominal">
+
+<input id="umumUraian"
+placeholder="Uraian">
+
+<button class="btn-red"
+onclick="tambahPengeluaranUmum()">
+Simpan Pengeluaran Umum
+</button>
+
+</div>
+
+<div class="card">
+
+<h3>Pengeluaran Tabungan</h3>
+
+<input id="tabunganNominal"
+type="number"
+placeholder="Nominal">
+
+<input id="tabunganUraian"
+placeholder="Uraian">
+
+<button class="btn-purple"
+onclick="tambahPengeluaranTabungan()">
+Simpan Pengeluaran Tabungan
+</button>
+
+</div>
+
+<div id="ownerArea" style="display:none;">
+
+<div class="card">
+
+<h3>Laporan Transaksi</h3>
+
+<table>
+
+<tr>
 <th>Waktu</th>
+<th>Kasir</th>
 <th>Jenis</th>
 <th>Uraian</th>
 <th>Nominal</th>
@@ -508,18 +646,39 @@ background:white;
 
 </div>
 
-<button onclick="logout()"
-style="
-margin-top:20px;
-padding:12px;
-width:100%;
-background:gray;
-color:white;
-border:none;
-border-radius:10px;
-">
+<div class="card">
+
+<h3>Log Aktivitas Kasir</h3>
+
+<table>
+
+<tr>
+<th>Waktu</th>
+<th>Kasir</th>
+<th>Aktivitas</th>
+</tr>
+
+<tbody id="isiLog"></tbody>
+
+</table>
+
+<button class="btn-black"
+onclick="resetData()">
+RESET SEMUA DATA
+</button>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<button class="btn-gray"
+onclick="logout()">
 Kembali ke Home
 </button>
+
+</div>
 
 </div>
 
