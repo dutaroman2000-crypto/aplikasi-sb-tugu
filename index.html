@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>APLIKASI SB TUGU</title>
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 
@@ -12,15 +12,15 @@ body{
   font-family:Arial;
   background:#f5f5f5;
   margin:0;
-  padding:6px;
+  padding:3px;
 }
 
 .card{
   background:white;
-  border-radius:10px;
-  padding:8px;
-  margin-bottom:6px;
-  box-shadow:0 1px 4px rgba(0,0,0,0.08);
+  border-radius:8px;
+  padding:5px;
+  margin-bottom:4px;
+  box-shadow:0 1px 3px rgba(0,0,0,0.08);
 }
 
 .summary{
@@ -29,41 +29,41 @@ body{
 
 .summary h4{
   margin:0;
-  font-size:11px;
+  font-size:9px;
   color:#666;
 }
 
 .summary h2{
-  margin:4px 0 0 0;
-  font-size:15px;
+  margin:2px 0 0 0;
+  font-size:13px;
 }
 
 .transaksi-grid{
   display:grid;
   grid-template-columns:repeat(2,1fr);
-  gap:6px;
+  gap:4px;
 }
 
 input{
   width:100%;
-  padding:7px;
-  margin-top:5px;
-  border-radius:7px;
+  padding:5px;
+  margin-top:3px;
+  border-radius:5px;
   border:1px solid #ccc;
   box-sizing:border-box;
-  font-size:12px;
+  font-size:11px;
 }
 
 button{
   width:100%;
-  padding:8px;
-  margin-top:6px;
+  padding:5px;
+  margin-top:4px;
   border:none;
-  border-radius:7px;
+  border-radius:5px;
   color:white;
   font-weight:bold;
   cursor:pointer;
-  font-size:12px;
+  font-size:11px;
 }
 
 .btn-orange{
@@ -90,31 +90,14 @@ button{
   background:gray;
 }
 
-table{
-  width:100%;
-  border-collapse:collapse;
-  background:white;
-}
-
-th, td{
-  border:1px solid #ddd;
-  padding:4px;
-  font-size:10px;
-}
-
-th{
-  background:orange;
-  color:white;
-}
-
 .area-title{
-  margin:12px 0;
-  padding:8px;
+  margin:5px 0;
+  padding:5px;
   color:white;
   font-weight:bold;
   text-align:center;
-  border-radius:10px;
-  font-size:14px;
+  border-radius:7px;
+  font-size:11px;
 }
 
 .penjualan{
@@ -123,6 +106,41 @@ th{
 
 .pengeluaran{
   background:red;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th, td{
+  border:1px solid #ddd;
+  padding:3px;
+  font-size:9px;
+}
+
+th{
+  background:orange;
+  color:white;
+}
+
+h1{
+  font-size:18px;
+  margin:2px 0;
+}
+
+h2{
+  font-size:14px;
+  margin:2px 0;
+}
+
+h3{
+  font-size:11px;
+  margin:2px 0;
+}
+
+h4{
+  margin:1px 0;
 }
 
 @media(max-width:700px){
@@ -144,7 +162,6 @@ let totalPengeluaranUmum = 0;
 let totalPengeluaranTabungan = 0;
 
 let transaksi = [];
-
 let logAktivitas = [];
 
 let userLogin = "";
@@ -198,10 +215,10 @@ function tambahLog(teks){
 
 function login(){
 
-  var username =
+  let username =
     document.getElementById("username").value;
 
-  var password =
+  let password =
     document.getElementById("password").value;
 
   if(
@@ -214,45 +231,37 @@ function login(){
 
     userLogin = username;
 
-    document.getElementById("loginPage").style.display =
-      "none";
+    document.getElementById("loginPage").style.display="none";
 
-    document.getElementById("dashboard").style.display =
-      "block";
+    document.getElementById("dashboard").style.display="block";
 
-    tampilkanLaporan();
+    updateDashboard();
 
     tampilkanHistoryKasir();
+
+    tampilkanLaporan();
 
     tampilkanLog();
 
     if(username=="owner"){
 
-      document.getElementById("ownerArea").style.display =
-        "block";
+      document.getElementById("ownerArea").style.display="block";
 
-      document.getElementById("areaPenjualan").style.display =
-        "none";
+      document.getElementById("areaPenjualan").style.display="none";
 
-      document.getElementById("areaPengeluaran").style.display =
-        "none";
+      document.getElementById("areaPengeluaran").style.display="none";
 
-      document.getElementById("historyKasir").style.display =
-        "none";
+      document.getElementById("historyKasir").style.display="none";
 
     }else{
 
-      document.getElementById("ownerArea").style.display =
-        "none";
+      document.getElementById("ownerArea").style.display="none";
 
-      document.getElementById("areaPenjualan").style.display =
-        "block";
+      document.getElementById("areaPenjualan").style.display="block";
 
-      document.getElementById("areaPengeluaran").style.display =
-        "block";
+      document.getElementById("areaPengeluaran").style.display="block";
 
-      document.getElementById("historyKasir").style.display =
-        "block";
+      document.getElementById("historyKasir").style.display="block";
 
     }
 
@@ -266,11 +275,9 @@ function login(){
 
 function logout(){
 
-  document.getElementById("dashboard").style.display =
-    "none";
+  document.getElementById("dashboard").style.display="none";
 
-  document.getElementById("loginPage").style.display =
-    "block";
+  document.getElementById("loginPage").style.display="block";
 
 }
 
@@ -300,18 +307,17 @@ function tampilkanLaporan(){
   transaksi.forEach(function(item){
 
     isi +=
-      "<tr>"+
-      "<td>"+item.waktu+"</td>"+
-      "<td>"+item.user+"</td>"+
-      "<td>"+item.jenis+"</td>"+
-      "<td>"+item.uraian+"</td>"+
-      "<td>Rp "+formatRupiah(item.nominal)+"</td>"+
-      "</tr>";
+    "<tr>"+
+    "<td>"+item.waktu+"</td>"+
+    "<td>"+item.user+"</td>"+
+    "<td>"+item.jenis+"</td>"+
+    "<td>"+item.uraian+"</td>"+
+    "<td>Rp "+formatRupiah(item.nominal)+"</td>"+
+    "</tr>";
 
   });
 
-  document.getElementById("isiLaporan").innerHTML =
-    isi;
+  document.getElementById("isiLaporan").innerHTML = isi;
 
 }
 
@@ -322,16 +328,15 @@ function tampilkanLog(){
   logAktivitas.forEach(function(item){
 
     isi +=
-      "<tr>"+
-      "<td>"+item.waktu+"</td>"+
-      "<td>"+item.user+"</td>"+
-      "<td>"+item.aktivitas+"</td>"+
-      "</tr>";
+    "<tr>"+
+    "<td>"+item.waktu+"</td>"+
+    "<td>"+item.user+"</td>"+
+    "<td>"+item.aktivitas+"</td>"+
+    "</tr>";
 
   });
 
-  document.getElementById("isiLog").innerHTML =
-    isi;
+  document.getElementById("isiLog").innerHTML = isi;
 
 }
 
@@ -339,37 +344,45 @@ function tampilkanHistoryKasir(){
 
   let isi="";
 
-  transaksi.forEach(function(item,index){
+  let dataKasir =
+    transaksi.filter(function(item){
 
-    if(item.user==userLogin){
+      return item.user==userLogin;
 
-      isi +=
-        "<tr>"+
+    });
 
-        "<td>"+item.waktu+"</td>"+
+  let limaTerakhir =
+    dataKasir.slice(-5).reverse();
 
-        "<td>"+item.jenis+"</td>"+
+  limaTerakhir.forEach(function(item){
 
-        "<td>"+item.uraian+"</td>"+
+    let indexAsli =
+      transaksi.indexOf(item);
 
-        "<td>Rp "+formatRupiah(item.nominal)+"</td>"+
+    isi +=
+    "<tr>"+
 
-        "<td>"+
+    "<td>"+item.waktu+"</td>"+
 
-        "<button onclick='ubahTransaksi("+index+")' style='background:orange;color:white;border:none;padding:4px;border-radius:5px;margin-bottom:3px;'>Ubah</button><br>"+
+    "<td>"+item.jenis+"</td>"+
 
-        "<button onclick='hapusTransaksi("+index+")' style='background:red;color:white;border:none;padding:4px;border-radius:5px;'>Hapus</button>"+
+    "<td>"+item.uraian+"</td>"+
 
-        "</td>"+
+    "<td>Rp "+formatRupiah(item.nominal)+"</td>"+
 
-        "</tr>";
+    "<td style='white-space:nowrap;'>"+
 
-    }
+    "<button onclick='ubahTransaksi("+indexAsli+")' style='background:orange;color:white;border:none;padding:3px 5px;border-radius:4px;font-size:9px;margin-right:2px;'>Ubah</button>"+
+
+    "<button onclick='hapusTransaksi("+indexAsli+")' style='background:red;color:white;border:none;padding:3px 5px;border-radius:4px;font-size:9px;'>Hapus</button>"+
+
+    "</td>"+
+
+    "</tr>";
 
   });
 
-  document.getElementById("isiHistoryKasir").innerHTML =
-    isi;
+  document.getElementById("isiHistoryKasir").innerHTML = isi;
 
 }
 
@@ -378,23 +391,15 @@ function ubahTransaksi(index){
   let item = transaksi[index];
 
   let nominalBaru =
-    prompt(
-      "Ubah nominal",
-      item.nominal
-    );
+    prompt("Ubah nominal", item.nominal);
 
   if(nominalBaru==null) return;
 
   nominalBaru =
-    parseInt(
-      nominalBaru.replace(/\./g,'')
-    ) || 0;
+    parseInt(nominalBaru.replace(/\./g,'')) || 0;
 
   let uraianBaru =
-    prompt(
-      "Ubah uraian",
-      item.uraian
-    );
+    prompt("Ubah uraian", item.uraian);
 
   if(uraianBaru==null) return;
 
@@ -402,12 +407,9 @@ function ubahTransaksi(index){
     formatUraian(uraianBaru);
 
   tambahLog(
-    "Mengubah " +
-    item.jenis +
-    " dari Rp " +
-    formatRupiah(item.nominal) +
-    " menjadi Rp " +
-    formatRupiah(nominalBaru)
+    "Mengubah "+item.jenis+
+    " Rp "+formatRupiah(item.nominal)+
+    " menjadi Rp "+formatRupiah(nominalBaru)
   );
 
   if(item.jenis=="Penjualan Tunai"){
@@ -448,7 +450,6 @@ function ubahTransaksi(index){
   }
 
   item.nominal = nominalBaru;
-
   item.uraian = uraianBaru;
 
   updateDashboard();
@@ -466,10 +467,8 @@ function hapusTransaksi(index){
   if(confirm("Yakin hapus transaksi?")){
 
     tambahLog(
-      "Menghapus " +
-      item.jenis +
-      " Rp " +
-      formatRupiah(item.nominal)
+      "Menghapus "+item.jenis+
+      " Rp "+formatRupiah(item.nominal)
     );
 
     if(item.jenis=="Penjualan Tunai"){
@@ -525,7 +524,6 @@ function tambahPenjualanTunai(){
     );
 
   saldo += nominal;
-
   totalTunai += nominal;
 
   transaksi.push({
@@ -542,10 +540,11 @@ function tambahPenjualanTunai(){
   );
 
   updateDashboard();
-
   tampilkanLaporan();
-
   tampilkanHistoryKasir();
+
+  document.getElementById("tunaiNominal").value="";
+  document.getElementById("tunaiUraian").value="";
 
 }
 
@@ -578,10 +577,11 @@ function tambahPenjualanQris(){
   );
 
   updateDashboard();
-
   tampilkanLaporan();
-
   tampilkanHistoryKasir();
+
+  document.getElementById("qrisNominal").value="";
+  document.getElementById("qrisUraian").value="";
 
 }
 
@@ -599,7 +599,6 @@ function tambahPengeluaranUmum(){
     );
 
   saldo -= nominal;
-
   totalPengeluaranUmum += nominal;
 
   transaksi.push({
@@ -616,10 +615,11 @@ function tambahPengeluaranUmum(){
   );
 
   updateDashboard();
-
   tampilkanLaporan();
-
   tampilkanHistoryKasir();
+
+  document.getElementById("umumNominal").value="";
+  document.getElementById("umumUraian").value="";
 
 }
 
@@ -637,7 +637,6 @@ function tambahPengeluaranTabungan(){
     );
 
   saldo -= nominal;
-
   totalPengeluaranTabungan += nominal;
 
   transaksi.push({
@@ -654,10 +653,11 @@ function tambahPengeluaranTabungan(){
   );
 
   updateDashboard();
-
   tampilkanLaporan();
-
   tampilkanHistoryKasir();
+
+  document.getElementById("tabunganNominal").value="";
+  document.getElementById("tabunganUraian").value="";
 
 }
 
@@ -673,7 +673,6 @@ function tambahPengeluaranTabungan(){
 
 <h1 style="
 color:#222;
-font-size:24px;
 font-weight:bold;
 ">
 APLIKASI SB TUGU
@@ -681,8 +680,7 @@ APLIKASI SB TUGU
 
 <h3>Kas Warteg Online</h3>
 
-<input id="username"
-placeholder="Username">
+<input id="username" placeholder="Username">
 
 <input id="password"
 type="password"
@@ -697,8 +695,7 @@ LOGIN
 
 </div>
 
-<div id="dashboard"
-style="display:none;">
+<div id="dashboard" style="display:none;">
 
 <div class="card">
 
@@ -710,8 +707,6 @@ align-items:center;
 
 <h1 style="
 color:#222;
-margin:0;
-font-size:24px;
 font-weight:bold;
 ">
 DASHBOARD SB TUGU
@@ -721,7 +716,7 @@ DASHBOARD SB TUGU
 margin:0;
 color:green;
 text-align:right;
-font-size:13px;
+font-size:11px;
 ">
 Saldo Uang Tunai<br>
 Rp <span id="saldo">0</span>
@@ -734,8 +729,8 @@ Rp <span id="saldo">0</span>
 <div style="
 display:grid;
 grid-template-columns:1fr 1fr;
-gap:6px;
-margin-bottom:6px;
+gap:4px;
+margin-bottom:4px;
 ">
 
 <div>
@@ -892,7 +887,7 @@ Simpan
 
 <div class="card">
 
-<h3>History Transaksi Kasir</h3>
+<h3>History Transaksi Kasir (5 Terakhir)</h3>
 
 <table>
 
@@ -912,8 +907,7 @@ Simpan
 
 </div>
 
-<div id="ownerArea"
-style="display:none;">
+<div id="ownerArea" style="display:none;">
 
 <div class="card">
 
