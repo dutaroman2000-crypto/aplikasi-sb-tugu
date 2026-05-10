@@ -1,0 +1,9 @@
+{
+  "name": "APLIKASI SB TUGU",
+  "short_name": "SB TUGU",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ff9800",
+  "icons": []
+}
