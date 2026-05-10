@@ -178,7 +178,7 @@ function formatInputRupiah(input){
     input.value.replace(/\D/g,'');
 
   if(angka==""){
-    input.value="";
+    input.value="0";
     return;
   }
 
@@ -453,9 +453,7 @@ function ubahTransaksi(index){
   item.uraian = uraianBaru;
 
   updateDashboard();
-
   tampilkanHistoryKasir();
-
   tampilkanLaporan();
 
 }
@@ -501,9 +499,7 @@ function hapusTransaksi(index){
     transaksi.splice(index,1);
 
     updateDashboard();
-
     tampilkanHistoryKasir();
-
     tampilkanLaporan();
 
   }
@@ -543,8 +539,9 @@ function tambahPenjualanTunai(){
   tampilkanLaporan();
   tampilkanHistoryKasir();
 
-  document.getElementById("tunaiNominal").value="";
+  document.getElementById("tunaiNominal").value="0";
   document.getElementById("tunaiUraian").value="";
+  document.getElementById("tunaiNominal").focus();
 
 }
 
@@ -580,8 +577,9 @@ function tambahPenjualanQris(){
   tampilkanLaporan();
   tampilkanHistoryKasir();
 
-  document.getElementById("qrisNominal").value="";
+  document.getElementById("qrisNominal").value="0";
   document.getElementById("qrisUraian").value="";
+  document.getElementById("qrisNominal").focus();
 
 }
 
@@ -618,8 +616,9 @@ function tambahPengeluaranUmum(){
   tampilkanLaporan();
   tampilkanHistoryKasir();
 
-  document.getElementById("umumNominal").value="";
+  document.getElementById("umumNominal").value="0";
   document.getElementById("umumUraian").value="";
+  document.getElementById("umumNominal").focus();
 
 }
 
@@ -656,8 +655,9 @@ function tambahPengeluaranTabungan(){
   tampilkanLaporan();
   tampilkanHistoryKasir();
 
-  document.getElementById("tabunganNominal").value="";
+  document.getElementById("tabunganNominal").value="0";
   document.getElementById("tabunganUraian").value="";
+  document.getElementById("tabunganNominal").focus();
 
 }
 
@@ -736,23 +736,13 @@ margin-bottom:4px;
 <div>
 
 <div class="card summary">
-
 <h4>Total Penjualan Tunai</h4>
-
-<h2>
-Rp <span id="totalTunai">0</span>
-</h2>
-
+<h2>Rp <span id="totalTunai">0</span></h2>
 </div>
 
 <div class="card summary">
-
 <h4>Total Penjualan QRIS</h4>
-
-<h2>
-Rp <span id="totalQris">0</span>
-</h2>
-
+<h2>Rp <span id="totalQris">0</span></h2>
 </div>
 
 </div>
@@ -760,23 +750,13 @@ Rp <span id="totalQris">0</span>
 <div>
 
 <div class="card summary">
-
 <h4>Total Pengeluaran Umum</h4>
-
-<h2>
-Rp <span id="totalPengeluaranUmum">0</span>
-</h2>
-
+<h2>Rp <span id="totalPengeluaranUmum">0</span></h2>
 </div>
 
 <div class="card summary">
-
 <h4>Total Pengeluaran Tabungan</h4>
-
-<h2>
-Rp <span id="totalPengeluaranTabungan">0</span>
-</h2>
-
+<h2>Rp <span id="totalPengeluaranTabungan">0</span></h2>
 </div>
 
 </div>
@@ -797,7 +777,7 @@ AREA INPUT PENJUALAN
 
 <input id="tunaiNominal"
 type="text"
-placeholder="Nominal"
+value="0"
 onkeyup="formatInputRupiah(this)">
 
 <input id="tunaiUraian"
@@ -816,7 +796,7 @@ Simpan
 
 <input id="qrisNominal"
 type="text"
-placeholder="Nominal"
+value="0"
 onkeyup="formatInputRupiah(this)">
 
 <input id="qrisUraian"
@@ -847,7 +827,7 @@ AREA INPUT PENGELUARAN
 
 <input id="umumNominal"
 type="text"
-placeholder="Nominal"
+value="0"
 onkeyup="formatInputRupiah(this)">
 
 <input id="umumUraian"
@@ -866,7 +846,7 @@ Simpan
 
 <input id="tabunganNominal"
 type="text"
-placeholder="Nominal"
+value="0"
 onkeyup="formatInputRupiah(this)">
 
 <input id="tabunganUraian"
