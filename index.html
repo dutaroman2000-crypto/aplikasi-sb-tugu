@@ -66,29 +66,12 @@ button{
   font-size:11px;
 }
 
-.btn-orange{
-  background:orange;
-}
-
-.btn-green{
-  background:green;
-}
-
-.btn-blue{
-  background:#1976d2;
-}
-
-.btn-red{
-  background:red;
-}
-
-.btn-purple{
-  background:purple;
-}
-
-.btn-gray{
-  background:gray;
-}
+.btn-orange{background:orange;}
+.btn-green{background:green;}
+.btn-blue{background:#1976d2;}
+.btn-red{background:red;}
+.btn-purple{background:purple;}
+.btn-gray{background:gray;}
 
 .area-title{
   margin:5px 0;
@@ -100,13 +83,8 @@ button{
   font-size:11px;
 }
 
-.penjualan{
-  background:orange;
-}
-
-.pengeluaran{
-  background:red;
-}
+.penjualan{background:orange;}
+.pengeluaran{background:red;}
 
 table{
   width:100%;
@@ -128,18 +106,9 @@ th{
   color:white;
 }
 
-.col-waktu{
-  width:52px;
-}
-
-.col-jenis{
-  width:42px;
-}
-
-.col-nominal{
-  width:55px;
-}
-
+.col-waktu{width:52px;}
+.col-jenis{width:42px;}
+.col-nominal{width:55px;}
 .col-aksi{
   width:72px;
   text-align:center;
@@ -267,11 +236,8 @@ function login(){
     document.getElementById("dashboard").style.display="block";
 
     updateDashboard();
-
     tampilkanHistoryKasir();
-
     tampilkanLaporan();
-
     tampilkanLog();
 
     if(username=="owner"){
@@ -335,15 +301,29 @@ function tampilkanLaporan(){
 
   let isi="";
 
-  transaksi.forEach(function(item){
+  transaksi.forEach(function(item,index){
 
     isi +=
     "<tr>"+
+
     "<td>"+item.waktu+"</td>"+
+
     "<td>"+item.user+"</td>"+
+
     "<td>"+item.jenis+"</td>"+
+
     "<td>"+item.uraian+"</td>"+
+
     "<td>Rp "+formatRupiah(item.nominal)+"</td>"+
+
+    "<td class='col-aksi'>"+
+
+    "<button class='aksi-btn' onclick='ubahTransaksi("+index+")' style='background:orange;margin-right:2px;'>Ubah</button>"+
+
+    "<button class='aksi-btn' onclick='hapusTransaksi("+index+")' style='background:red;'>Hapus</button>"+
+
+    "</td>"+
+
     "</tr>";
 
   });
@@ -437,7 +417,7 @@ function ubahTransaksi(index){
   uraianBaru =
     formatUraian(uraianBaru);
 
-  if(item.jenis=="Penjualan Tunai"){
+  if(item.jenis=="Tunai"){
 
     saldo =
       saldo - item.nominal + nominalBaru;
@@ -447,14 +427,14 @@ function ubahTransaksi(index){
 
   }
 
-  if(item.jenis=="Penjualan QRIS"){
+  if(item.jenis=="QRIS"){
 
     totalQris =
       totalQris - item.nominal + nominalBaru;
 
   }
 
-  if(item.jenis=="Pengeluaran Umum"){
+  if(item.jenis=="Pengeluaran"){
 
     saldo =
       saldo + item.nominal - nominalBaru;
@@ -464,7 +444,7 @@ function ubahTransaksi(index){
 
   }
 
-  if(item.jenis=="Pengeluaran Tabungan"){
+  if(item.jenis=="Tabungan"){
 
     saldo =
       saldo + item.nominal - nominalBaru;
@@ -495,27 +475,27 @@ function hapusTransaksi(index){
 
   if(confirm("Yakin hapus transaksi?")){
 
-    if(item.jenis=="Penjualan Tunai"){
+    if(item.jenis=="Tunai"){
 
       saldo -= item.nominal;
       totalTunai -= item.nominal;
 
     }
 
-    if(item.jenis=="Penjualan QRIS"){
+    if(item.jenis=="QRIS"){
 
       totalQris -= item.nominal;
 
     }
 
-    if(item.jenis=="Pengeluaran Umum"){
+    if(item.jenis=="Pengeluaran"){
 
       saldo += item.nominal;
       totalPengeluaranUmum -= item.nominal;
 
     }
 
-    if(item.jenis=="Pengeluaran Tabungan"){
+    if(item.jenis=="Tabungan"){
 
       saldo += item.nominal;
       totalPengeluaranTabungan -= item.nominal;
@@ -702,10 +682,7 @@ function tambahPengeluaranTabungan(){
 
 <div class="card">
 
-<h1 style="
-color:#222;
-font-weight:bold;
-">
+<h1 style="color:#222;font-weight:bold;">
 APLIKASI SB TUGU
 </h1>
 
@@ -932,6 +909,7 @@ Simpan
 <th>Jenis</th>
 <th>Uraian</th>
 <th>Nominal</th>
+<th>Aksi</th>
 </tr>
 
 <tbody id="isiLaporan"></tbody>
