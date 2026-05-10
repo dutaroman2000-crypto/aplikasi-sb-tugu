@@ -3,64 +3,67 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SB TUGU REALTIME</title>
+
+<title>APLIKASI SB TUGU</title>
+
 <style>
+
 body{
-font-family:Arial;
-background:#f5f5f5;
-margin:0;
-padding:3px;
+  font-family:Arial;
+  background:#f5f5f5;
+  margin:0;
+  padding:3px;
 }
 
 .card{
-background:white;
-border-radius:8px;
-padding:5px;
-margin-bottom:4px;
-box-shadow:0 1px 3px rgba(0,0,0,0.08);
+  background:white;
+  border-radius:8px;
+  padding:5px;
+  margin-bottom:4px;
+  box-shadow:0 1px 3px rgba(0,0,0,0.08);
 }
 
 .summary{
-border-left:4px solid orange;
+  border-left:4px solid orange;
 }
 
 .summary h4{
-margin:0;
-font-size:9px;
-color:#666;
+  margin:0;
+  font-size:9px;
+  color:#666;
 }
 
 .summary h2{
-margin:2px 0 0 0;
-font-size:13px;
+  margin:2px 0 0 0;
+  font-size:13px;
 }
 
 .transaksi-grid{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:4px;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:4px;
 }
 
 input{
-width:100%;
-padding:5px;
-margin-top:3px;
-border-radius:5px;
-border:1px solid #ccc;
-box-sizing:border-box;
-font-size:11px;
+  width:100%;
+  padding:5px;
+  margin-top:3px;
+  border-radius:5px;
+  border:1px solid #ccc;
+  box-sizing:border-box;
+  font-size:11px;
 }
 
 button{
-width:100%;
-padding:5px;
-margin-top:4px;
-border:none;
-border-radius:5px;
-color:white;
-font-weight:bold;
-cursor:pointer;
-font-size:11px;
+  width:100%;
+  padding:5px;
+  margin-top:4px;
+  border:none;
+  border-radius:5px;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  font-size:11px;
 }
 
 .btn-orange{background:orange;}
@@ -71,403 +74,880 @@ font-size:11px;
 .btn-gray{background:gray;}
 
 .area-title{
-margin:5px 0;
-padding:5px;
-color:white;
-font-weight:bold;
-text-align:center;
-border-radius:7px;
-font-size:11px;
+  margin:5px 0;
+  padding:5px;
+  color:white;
+  font-weight:bold;
+  text-align:center;
+  border-radius:7px;
+  font-size:11px;
 }
 
 .penjualan{background:orange;}
 .pengeluaran{background:red;}
 
 table{
-width:100%;
-border-collapse:collapse;
-table-layout:fixed;
+  width:100%;
+  border-collapse:collapse;
+  table-layout:fixed;
 }
 
 th, td{
-border:1px solid #ddd;
-padding:2px;
-font-size:8px;
-overflow:hidden;
-text-overflow:ellipsis;
-white-space:nowrap;
+  border:1px solid #ddd;
+  padding:2px;
+  font-size:8px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
 }
 
 th{
-background:orange;
-color:white;
+  background:orange;
+  color:white;
 }
 
 .col-waktu{width:52px;}
 .col-jenis{width:42px;}
 .col-nominal{width:55px;}
-.col-aksi{width:72px;text-align:center;}
+.col-aksi{
+  width:72px;
+  text-align:center;
+}
 
 .aksi-btn{
-display:inline-block;
-width:32px;
-padding:2px;
-font-size:8px;
-border:none;
-border-radius:4px;
-color:white;
+  display:inline-block;
+  width:32px;
+  padding:2px;
+  font-size:8px;
+  border:none;
+  border-radius:4px;
+  color:white;
 }
 
-h1{font-size:18px;margin:2px 0;}
-h2{font-size:14px;margin:2px 0;}
-h3{font-size:11px;margin:2px 0;}
-h4{margin:1px 0;}
+h1{
+  font-size:18px;
+  margin:2px 0;
+}
+
+h2{
+  font-size:14px;
+  margin:2px 0;
+}
+
+h3{
+  font-size:11px;
+  margin:2px 0;
+}
+
+h4{
+  margin:1px 0;
+}
 
 @media(max-width:700px){
-.transaksi-grid{
-grid-template-columns:1fr;
+
+  .transaksi-grid{
+    grid-template-columns:1fr;
+  }
+
 }
+
+</style>
+
+<script>
+
+let saldo = 0;
+let totalTunai = 0;
+let totalQris = 0;
+let totalPengeluaranUmum = 0;
+let totalPengeluaranTabungan = 0;
+
+let transaksi = [];
+let logAktivitas = [];
+
+let userLogin = "";
+
+function formatRupiah(angka){
+
+  return angka.toLocaleString("id-ID");
+
 }
+
+function formatInputRupiah(input){
+
+  let angka =
+    input.value.replace(/\D/g,'');
+
+  if(angka==""){
+    input.value="0";
+    return;
+  }
+
+  input.value =
+    parseInt(angka).toLocaleString("id-ID");
+
+}
+
+function formatUraian(teks){
+
+  teks = teks.toLowerCase();
+
+  return teks.charAt(0).toUpperCase() + teks.slice(1);
+
+}
+
+function waktuSekarang(){
+
+  return new Date().toLocaleTimeString("id-ID");
+
+}
+
+function tambahLog(teks){
+
+  logAktivitas.push({
+    waktu:waktuSekarang(),
+    user:userLogin,
+    aktivitas:teks
+  });
+
+  tampilkanLog();
+
+}
+
+function login(){
+
+  let username =
+    document.getElementById("username").value;
+
+  let password =
+    document.getElementById("password").value;
+
+  if(
+    (username=="owner" && password=="12345") ||
+    (username=="kasir1" && password=="12345") ||
+    (username=="kasir2" && password=="12345") ||
+    (username=="kasir3" && password=="12345") ||
+    (username=="kasir4" && password=="12345")
+  ){
+
+    userLogin = username;
+
+    document.getElementById("loginPage").style.display="none";
+
+    document.getElementById("dashboard").style.display="block";
+
+    updateDashboard();
+    tampilkanHistoryKasir();
+    tampilkanLaporan();
+    tampilkanLog();
+
+    if(username=="owner"){
+
+      document.getElementById("ownerArea").style.display="block";
+
+      document.getElementById("areaPenjualan").style.display="none";
+
+      document.getElementById("areaPengeluaran").style.display="none";
+
+      document.getElementById("historyKasir").style.display="none";
+
+    }else{
+
+      document.getElementById("ownerArea").style.display="none";
+
+      document.getElementById("areaPenjualan").style.display="block";
+
+      document.getElementById("areaPengeluaran").style.display="block";
+
+      document.getElementById("historyKasir").style.display="block";
+
+    }
+
+  }else{
+
+    alert("Username atau Password salah");
+
+  }
+
+}
+
+function logout(){
+
+  document.getElementById("dashboard").style.display="none";
+
+  document.getElementById("loginPage").style.display="block";
+
+}
+
+function updateDashboard(){
+
+  document.getElementById("saldo").innerHTML =
+    formatRupiah(saldo);
+
+  document.getElementById("totalTunai").innerHTML =
+    formatRupiah(totalTunai);
+
+  document.getElementById("totalQris").innerHTML =
+    formatRupiah(totalQris);
+
+  document.getElementById("totalPengeluaranUmum").innerHTML =
+    formatRupiah(totalPengeluaranUmum);
+
+  document.getElementById("totalPengeluaranTabungan").innerHTML =
+    formatRupiah(totalPengeluaranTabungan);
+
+}
+
+function tampilkanLaporan(){
+
+  let isi="";
+
+  transaksi.forEach(function(item,index){
+
+    isi +=
+    "<tr>"+
+
+    "<td>"+item.waktu+"</td>"+
+
+    "<td>"+item.user+"</td>"+
+
+    "<td>"+item.jenis+"</td>"+
+
+    "<td>"+item.uraian+"</td>"+
+
+    "<td>Rp "+formatRupiah(item.nominal)+"</td>"+
+
+    "<td class='col-aksi'>"+
+
+    "<button class='aksi-btn' onclick='ubahTransaksi("+index+")' style='background:orange;margin-right:2px;'>Ubah</button>"+
+
+    "<button class='aksi-btn' onclick='hapusTransaksi("+index+")' style='background:red;'>Hapus</button>"+
+
+    "</td>"+
+
+    "</tr>";
+
+  });
+
+  document.getElementById("isiLaporan").innerHTML = isi;
+
+}
+
+function tampilkanLog(){
+
+  let isi="";
+
+  logAktivitas.forEach(function(item){
+
+    isi +=
+    "<tr>"+
+    "<td>"+item.waktu+"</td>"+
+    "<td>"+item.user+"</td>"+
+    "<td>"+item.aktivitas+"</td>"+
+    "</tr>";
+
+  });
+
+  document.getElementById("isiLog").innerHTML = isi;
+
+}
+
+function tampilkanHistoryKasir(){
+
+  let isi="";
+
+  let dataKasir =
+    transaksi.filter(function(item){
+
+      return item.user==userLogin;
+
+    });
+
+  let limaTerakhir =
+    dataKasir.slice(-5).reverse();
+
+  limaTerakhir.forEach(function(item){
+
+    let indexAsli =
+      transaksi.indexOf(item);
+
+    isi +=
+    "<tr>"+
+
+    "<td class='col-waktu'>"+item.waktu+"</td>"+
+
+    "<td class='col-jenis'>"+item.jenis+"</td>"+
+
+    "<td>"+item.uraian+"</td>"+
+
+    "<td class='col-nominal'>Rp "+formatRupiah(item.nominal)+"</td>"+
+
+    "<td class='col-aksi'>"+
+
+    "<button class='aksi-btn' onclick='ubahTransaksi("+indexAsli+")' style='background:orange;margin-right:2px;'>Ubah</button>"+
+
+    "<button class='aksi-btn' onclick='hapusTransaksi("+indexAsli+")' style='background:red;'>Hapus</button>"+
+
+    "</td>"+
+
+    "</tr>";
+
+  });
+
+  document.getElementById("isiHistoryKasir").innerHTML = isi;
+
+}
+
+function ubahTransaksi(index){
+
+  let item = transaksi[index];
+
+  let nominalBaru =
+    prompt("Ubah nominal", item.nominal);
+
+  if(nominalBaru==null) return;
+
+  nominalBaru =
+    parseInt(nominalBaru.replace(/\./g,'')) || 0;
+
+  let uraianBaru =
+    prompt("Ubah uraian", item.uraian);
+
+  if(uraianBaru==null) return;
+
+  uraianBaru =
+    formatUraian(uraianBaru);
+
+  if(item.jenis=="Tunai"){
+
+    saldo =
+      saldo - item.nominal + nominalBaru;
+
+    totalTunai =
+      totalTunai - item.nominal + nominalBaru;
+
+  }
+
+  if(item.jenis=="QRIS"){
+
+    totalQris =
+      totalQris - item.nominal + nominalBaru;
+
+  }
+
+  if(item.jenis=="Pengeluaran"){
+
+    saldo =
+      saldo + item.nominal - nominalBaru;
+
+    totalPengeluaranUmum =
+      totalPengeluaranUmum - item.nominal + nominalBaru;
+
+  }
+
+  if(item.jenis=="Tabungan"){
+
+    saldo =
+      saldo + item.nominal - nominalBaru;
+
+    totalPengeluaranTabungan =
+      totalPengeluaranTabungan - item.nominal + nominalBaru;
+
+  }
+
+  tambahLog(
+    "Mengubah "+item.jenis+
+    " Rp "+formatRupiah(item.nominal)+
+    " menjadi Rp "+formatRupiah(nominalBaru)
+  );
+
+  item.nominal = nominalBaru;
+  item.uraian = uraianBaru;
+
+  updateDashboard();
+  tampilkanHistoryKasir();
+  tampilkanLaporan();
+
+}
+
+function hapusTransaksi(index){
+
+  let item = transaksi[index];
+
+  if(confirm("Yakin hapus transaksi?")){
+
+    if(item.jenis=="Tunai"){
+
+      saldo -= item.nominal;
+      totalTunai -= item.nominal;
+
+    }
+
+    if(item.jenis=="QRIS"){
+
+      totalQris -= item.nominal;
+
+    }
+
+    if(item.jenis=="Pengeluaran"){
+
+      saldo += item.nominal;
+      totalPengeluaranUmum -= item.nominal;
+
+    }
+
+    if(item.jenis=="Tabungan"){
+
+      saldo += item.nominal;
+      totalPengeluaranTabungan -= item.nominal;
+
+    }
+
+    tambahLog(
+      "Menghapus "+item.jenis+
+      " Rp "+formatRupiah(item.nominal)
+    );
+
+    transaksi.splice(index,1);
+
+    updateDashboard();
+    tampilkanHistoryKasir();
+    tampilkanLaporan();
+
+  }
+
+}
+
+function tambahPenjualanTunai(){
+
+  let nominal =
+    parseInt(
+      document.getElementById("tunaiNominal")
+      .value.replace(/\./g,'')
+    ) || 0;
+
+  let uraian =
+    formatUraian(
+      document.getElementById("tunaiUraian").value
+    );
+
+  saldo += nominal;
+  totalTunai += nominal;
+
+  transaksi.push({
+    waktu:waktuSekarang(),
+    user:userLogin,
+    jenis:"Tunai",
+    uraian:uraian,
+    nominal:nominal
+  });
+
+  tambahLog(
+    "Tambah Tunai Rp "+
+    formatRupiah(nominal)
+  );
+
+  updateDashboard();
+  tampilkanLaporan();
+  tampilkanHistoryKasir();
+
+  document.getElementById("tunaiNominal").value="0";
+  document.getElementById("tunaiUraian").value="";
+  document.getElementById("tunaiNominal").focus();
+
+}
+
+function tambahPenjualanQris(){
+
+  let nominal =
+    parseInt(
+      document.getElementById("qrisNominal")
+      .value.replace(/\./g,'')
+    ) || 0;
+
+  let uraian =
+    formatUraian(
+      document.getElementById("qrisUraian").value
+    );
+
+  totalQris += nominal;
+
+  transaksi.push({
+    waktu:waktuSekarang(),
+    user:userLogin,
+    jenis:"QRIS",
+    uraian:uraian,
+    nominal:nominal
+  });
+
+  tambahLog(
+    "Tambah QRIS Rp "+
+    formatRupiah(nominal)
+  );
+
+  updateDashboard();
+  tampilkanLaporan();
+  tampilkanHistoryKasir();
+
+  document.getElementById("qrisNominal").value="0";
+  document.getElementById("qrisUraian").value="";
+  document.getElementById("qrisNominal").focus();
+
+}
+
+function tambahPengeluaranUmum(){
+
+  let nominal =
+    parseInt(
+      document.getElementById("umumNominal")
+      .value.replace(/\./g,'')
+    ) || 0;
+
+  let uraian =
+    formatUraian(
+      document.getElementById("umumUraian").value
+    );
+
+  saldo -= nominal;
+  totalPengeluaranUmum += nominal;
+
+  transaksi.push({
+    waktu:waktuSekarang(),
+    user:userLogin,
+    jenis:"Pengeluaran",
+    uraian:uraian,
+    nominal:nominal
+  });
+
+  tambahLog(
+    "Tambah Pengeluaran Rp "+
+    formatRupiah(nominal)
+  );
+
+  updateDashboard();
+  tampilkanLaporan();
+  tampilkanHistoryKasir();
+
+  document.getElementById("umumNominal").value="0";
+  document.getElementById("umumUraian").value="";
+  document.getElementById("umumNominal").focus();
+
+}
+
+function tambahPengeluaranTabungan(){
+
+  let nominal =
+    parseInt(
+      document.getElementById("tabunganNominal")
+      .value.replace(/\./g,'')
+    ) || 0;
+
+  let uraian =
+    formatUraian(
+      document.getElementById("tabunganUraian").value
+    );
+
+  saldo -= nominal;
+  totalPengeluaranTabungan += nominal;
+
+  transaksi.push({
+    waktu:waktuSekarang(),
+    user:userLogin,
+    jenis:"Tabungan",
+    uraian:uraian,
+    nominal:nominal
+  });
+
+  tambahLog(
+    "Tambah Tabungan Rp "+
+    formatRupiah(nominal)
+  );
+
+  updateDashboard();
+  tampilkanLaporan();
+  tampilkanHistoryKasir();
+
+  document.getElementById("tabunganNominal").value="0";
+  document.getElementById("tabunganUraian").value="";
+  document.getElementById("tabunganNominal").focus();
+
+}
+
+</script>
+
 </head>
+
 <body>
+
 <div id="loginPage">
+
 <div class="card">
-<h1 style="color:#222;font-weight:bold;">APLIKASI SB TUGU</h1>
-<h3>Kas Warteg Online Realtime</h3>
+
+<h1 style="color:#222;font-weight:bold;">
+APLIKASI SB TUGU
+</h1>
+
+<h3>Kas Warteg Online</h3>
+
 <input id="username" placeholder="Username">
-<input id="password" type="password" placeholder="Password">
-<button class="btn-orange" onclick="login()">LOGIN</button>
+
+<input id="password"
+type="password"
+placeholder="Password">
+
+<button class="btn-orange"
+onclick="login()">
+LOGIN
+</button>
+
 </div>
+
 </div>
+
 <div id="dashboard" style="display:none;">
+
 <div class="card">
-<div style="display:flex;justify-content:space-between;align-items:center;">
-<h1 style="color:#222;font-weight:bold;">DASHBOARD SB TUGU</h1>
-<h3 style="margin:0;color:green;text-align:right;font-size:11px;">
+
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+">
+
+<h1 style="
+color:#222;
+font-weight:bold;
+">
+DASHBOARD SB TUGU
+</h1>
+
+<h3 style="
+margin:0;
+color:green;
+text-align:right;
+font-size:11px;
+">
 Saldo Tunai<br>
 Rp <span id="saldo">0</span>
 </h3>
+
 </div>
+
 </div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:4px;">
+
+<div style="
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:4px;
+margin-bottom:4px;
+">
+
 <div>
+
 <div class="card summary">
 <h4>Total Tunai</h4>
 <h2>Rp <span id="totalTunai">0</span></h2>
 </div>
+
 <div class="card summary">
 <h4>Total QRIS</h4>
 <h2>Rp <span id="totalQris">0</span></h2>
 </div>
+
 </div>
+
 <div>
+
 <div class="card summary">
 <h4>Total Pengeluaran</h4>
 <h2>Rp <span id="totalPengeluaranUmum">0</span></h2>
 </div>
+
 <div class="card summary">
 <h4>Total Tabungan</h4>
 <h2>Rp <span id="totalPengeluaranTabungan">0</span></h2>
 </div>
+
 </div>
+
 </div>
+
 <div id="areaPenjualan">
-<div class="area-title penjualan">AREA INPUT PENJUALAN</div>
+
+<div class="area-title penjualan">
+AREA INPUT PENJUALAN
+</div>
+
 <div class="transaksi-grid">
+
 <div class="card">
+
 <h3>Penjualan Tunai</h3>
-<input id="tunaiNominal" type="text" value="0" onkeyup="formatInputRupiah(this)">
-<input id="tunaiUraian" placeholder="Uraian">
-<button class="btn-green" onclick="tambahPenjualanTunai()">Simpan</button>
+
+<input id="tunaiNominal"
+type="text"
+value="0"
+onkeyup="formatInputRupiah(this)">
+
+<input id="tunaiUraian"
+placeholder="Uraian">
+
+<button class="btn-green"
+onclick="tambahPenjualanTunai()">
+Simpan
+</button>
+
 </div>
+
 <div class="card">
+
 <h3>Penjualan QRIS</h3>
-<input id="qrisNominal" type="text" value="0" onkeyup="formatInputRupiah(this)">
-<input id="qrisUraian" placeholder="Uraian">
-<button class="btn-blue" onclick="tambahPenjualanQris()">Simpan</button>
+
+<input id="qrisNominal"
+type="text"
+value="0"
+onkeyup="formatInputRupiah(this)">
+
+<input id="qrisUraian"
+placeholder="Uraian">
+
+<button class="btn-blue"
+onclick="tambahPenjualanQris()">
+Simpan
+</button>
+
 </div>
+
 </div>
+
 </div>
+
 <div id="areaPengeluaran">
-<div class="area-title pengeluaran">AREA INPUT PENGELUARAN</div>
+
+<div class="area-title pengeluaran">
+AREA INPUT PENGELUARAN
+</div>
+
 <div class="transaksi-grid">
+
 <div class="card">
+
 <h3>Pengeluaran Umum</h3>
-<input id="umumNominal" type="text" value="0" onkeyup="formatInputRupiah(this)">
-<input id="umumUraian" placeholder="Uraian">
-<button class="btn-red" onclick="tambahPengeluaranUmum()">Simpan</button>
+
+<input id="umumNominal"
+type="text"
+value="0"
+onkeyup="formatInputRupiah(this)">
+
+<input id="umumUraian"
+placeholder="Uraian">
+
+<button class="btn-red"
+onclick="tambahPengeluaranUmum()">
+Simpan
+</button>
+
 </div>
+
 <div class="card">
+
 <h3>Pengeluaran Tabungan</h3>
-<input id="tabunganNominal" type="text" value="0" onkeyup="formatInputRupiah(this)">
-<input id="tabunganUraian" placeholder="Uraian">
-<button class="btn-purple" onclick="tambahPengeluaranTabungan()">Simpan</button>
+
+<input id="tabunganNominal"
+type="text"
+value="0"
+onkeyup="formatInputRupiah(this)">
+
+<input id="tabunganUraian"
+placeholder="Uraian">
+
+<button class="btn-purple"
+onclick="tambahPengeluaranTabungan()">
+Simpan
+</button>
+
 </div>
+
 </div>
+
 </div>
+
 <div id="historyKasir">
+
 <div class="card">
+
 <h3>History Kasir (5 Terakhir)</h3>
+
 <table>
+
 <tr>
 <th class="col-waktu">Waktu</th>
 <th class="col-jenis">Jenis</th>
 <th>Uraian</th>
 <th class="col-nominal">Nominal</th>
+<th class="col-aksi">Aksi</th>
 </tr>
+
 <tbody id="isiHistoryKasir"></tbody>
+
 </table>
+
 </div>
+
 </div>
+
 <div id="ownerArea" style="display:none;">
+
 <div class="card">
+
 <h3>Semua Transaksi</h3>
+
 <table>
+
 <tr>
 <th>Waktu</th>
 <th>Kasir</th>
 <th>Jenis</th>
 <th>Uraian</th>
 <th>Nominal</th>
+<th>Aksi</th>
 </tr>
+
 <tbody id="isiLaporan"></tbody>
+
 </table>
+
 </div>
-</div>
+
 <div class="card">
-<button class="btn-gray" onclick="logout()">Kembali ke Home</button>
-</div>
-</div>
-<script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+<h3>Log Aktivitas</h3>
 
-import {
-getDatabase,
-ref,
-push,
-onValue
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+<table>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAy2SdCWzkWfldozz0cBRL_ifP00IFb3vo",
-  authDomain: "sb-tugu-kasir.firebaseapp.com",
-  databaseURL: "https://sb-tugu-kasir-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "sb-tugu-kasir",
-  storageBucket: "sb-tugu-kasir.firebasestorage.app",
-  messagingSenderId: "953508498389",
-  appId: "1:953508498389:web:81b5720e8420a04cdb8b5c",
-  measurementId: "G-QDCMDN4K1K"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const transaksiRef = ref(db,'transaksi');
-
-window.userLogin = "";
-window.transaksiData = [];
-
-window.formatRupiah = function(angka){
-return Number(angka).toLocaleString('id-ID');
-}
-
-window.formatInputRupiah = function(input){
-let angka = input.value.replace(/\D/g,'');
-if(angka==""){
-input.value='0';
-return;
-}
-input.value = parseInt(angka).toLocaleString('id-ID');
-}
-
-window.formatUraian = function(teks){
-teks = teks.toLowerCase();
-return teks.charAt(0).toUpperCase() + teks.slice(1);
-}
-
-window.waktuSekarang = function(){
-return new Date().toLocaleTimeString('id-ID');
-}
-
-window.login = function(){
-
-let username = document.getElementById('username').value;
-let password = document.getElementById('password').value;
-
-if(
-(username=='owner' && password=='12345') ||
-(username=='kasir1' && password=='12345') ||
-(username=='kasir2' && password=='12345') ||
-(username=='kasir3' && password=='12345') ||
-(username=='kasir4' && password=='12345')
-){
-
-window.userLogin = username;
-
-loginPage.style.display='none';
-dashboard.style.display='block';
-
-if(username=='owner'){
-ownerArea.style.display='block';
-areaPenjualan.style.display='none';
-areaPengeluaran.style.display='none';
-historyKasir.style.display='none';
-}else{
-ownerArea.style.display='none';
-areaPenjualan.style.display='block';
-areaPengeluaran.style.display='block';
-historyKasir.style.display='block';
-}
-
-}else{
-alert('Username atau Password salah');
-}
-}
-
-window.logout = function(){
-location.reload();
-}
-
-function renderRealtime(){
-
-let saldo = 0;
-let totalTunai = 0;
-let totalQris = 0;
-let totalPengeluaran = 0;
-let totalTabungan = 0;
-
-let isiOwner = '';
-let isiKasir = '';
-
-let dataKasir = transaksiData.filter(x=>x.user==userLogin).slice(-5).reverse();
-
-transaksiData.forEach(function(item){
-
-if(item.jenis=='Tunai'){
-saldo += Number(item.nominal);
-totalTunai += Number(item.nominal);
-}
-
-if(item.jenis=='QRIS'){
-totalQris += Number(item.nominal);
-}
-
-if(item.jenis=='Pengeluaran'){
-saldo -= Number(item.nominal);
-totalPengeluaran += Number(item.nominal);
-}
-
-if(item.jenis=='Tabungan'){
-saldo -= Number(item.nominal);
-totalTabungan += Number(item.nominal);
-}
-
-isiOwner += `
 <tr>
-<td>${item.waktu}</td>
-<td>${item.user}</td>
-<td>${item.jenis}</td>
-<td>${item.uraian}</td>
-<td>Rp ${formatRupiah(item.nominal)}</td>
-</tr>`;
+<th>Waktu</th>
+<th>Kasir</th>
+<th>Aktivitas</th>
+</tr>
 
-});
+<tbody id="isiLog"></tbody>
 
-isiLaporan.innerHTML = isiOwner;
+</table>
 
-saldo.innerHTML = formatRupiah(saldo);
-totalTunai.innerHTML = formatRupiah(totalTunai);
-totalQris.innerHTML = formatRupiah(totalQris);
-totalPengeluaranUmum.innerHTML = formatRupiah(totalPengeluaran);
-totalPengeluaranTabungan.innerHTML = formatRupiah(totalTabungan);
+</div>
 
+</div>
 
- dataKasir.forEach(function(item){
+<div class="card">
 
-isiKasir += `
-<tr>
-<td>${item.waktu}</td>
-<td>${item.jenis}</td>
-<td>${item.uraian}</td>
-<td>Rp ${formatRupiah(item.nominal)}</td>
-</tr>`;
+<button class="btn-gray"
+onclick="logout()">
+Kembali ke Home
+</button>
 
-});
+</div>
 
-isiHistoryKasir.innerHTML = isiKasir;
+</div>
 
-}
-
-onValue(transaksiRef,(snapshot)=>{
-
-let data = snapshot.val();
-
-transaksiData = [];
-
-for(let id in data){
-transaksiData.push(data[id]);
-}
-
-renderRealtime();
-
-});
-
-window.simpanFirebase = async function(jenis,nominal,uraian){
-
-await push(transaksiRef,{
-waktu:waktuSekarang(),
-user:userLogin,
-jenis:jenis,
-uraian:uraian,
-nominal:nominal
-});
-
-}
-
-window.tambahPenjualanTunai = async function(){
-
-let nominal = parseInt(tunaiNominal.value.replace(/\./g,'')) || 0;
-let uraian = formatUraian(tunaiUraian.value);
-
-await simpanFirebase('Tunai',nominal,uraian);
-
- tunaiNominal.value='0';
- tunaiUraian.value='';
-}
-
-window.tambahPenjualanQris = async function(){
-
-let nominal = parseInt(qrisNominal.value.replace(/\./g,'')) || 0;
-let uraian = formatUraian(qrisUraian.value);
-
-await simpanFirebase('QRIS',nominal,uraian);
-
- qrisNominal.value='0';
- qrisUraian.value='';
-}
-
-window.tambahPengeluaranUmum = async function(){
-
-let nominal = parseInt(umumNominal.value.replace(/\./g,'')) || 0;
-let uraian = formatUraian(umumUraian.value);
-
-await simpanFirebase('Pengeluaran',nominal,uraian);
-
- umumNominal.value='0';
- umumUraian.value='';
-}
-
-window.tambahPengeluaranTabungan = async function(){
-
-let nominal = parseInt(tabunganNominal.value.replace(/\./g,'')) || 0;
-let uraian = formatUraian(tabunganUraian.value);
-
-await simpanFirebase('Tabungan',nominal,uraian);
-
- tabunganNominal.value='0';
- tabunganUraian.value='';
-}
-</script>
 </body>
 </html>
