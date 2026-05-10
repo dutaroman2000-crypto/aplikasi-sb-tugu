@@ -58,6 +58,18 @@ function login() {
     document.getElementById("totalQris").innerHTML =
       totalQris;
 
+    if (username === "owner") {
+
+      document.getElementById("menuOwner").style.display =
+        "block";
+
+    } else {
+
+      document.getElementById("menuOwner").style.display =
+        "none";
+
+    }
+
   } else {
 
     alert("Username atau Password salah");
@@ -148,6 +160,27 @@ function tambahQris() {
   );
 
   document.getElementById("qris").value = "";
+
+}
+
+function resetSaldo() {
+
+  if (confirm("Yakin reset semua saldo?")) {
+
+    saldo = 0;
+    totalQris = 0;
+
+    simpanData();
+
+    document.getElementById("saldo").innerHTML =
+      saldo;
+
+    document.getElementById("totalQris").innerHTML =
+      totalQris;
+
+    alert("Saldo berhasil direset");
+
+  }
 
 }
 
@@ -361,6 +394,27 @@ border-radius:10px;
 ">
 Tambah QRIS
 </button>
+
+<div id="menuOwner" style="display:none;">
+
+<hr>
+
+<h3>MENU OWNER / ADMIN</h3>
+
+<button onclick="resetSaldo()"
+style="
+margin-top:10px;
+padding:12px;
+width:100%;
+background:black;
+color:white;
+border:none;
+border-radius:10px;
+">
+Reset Semua Saldo
+</button>
+
+</div>
 
 <button onclick="logout()"
 style="
