@@ -13,9 +13,11 @@
 
   <script>
 
-    if ('serviceWorker' in navigator) {
+    if ('serviceWorker' in navigator') {
       navigator.serviceWorker.register('/sw.js');
     }
+
+    let totalQris = 0;
 
     function login() {
 
@@ -108,6 +110,25 @@
 
       document.getElementById("keluar").value = "";
       document.getElementById("uraianKeluar").value = "";
+
+    }
+
+    function tambahQris() {
+
+      var qris =
+        parseInt(document.getElementById("qris").value) || 0;
+
+      totalQris += qris;
+
+      document.getElementById("totalQris").innerHTML =
+        totalQris;
+
+      alert(
+        "QRIS berhasil ditambahkan\n\n" +
+        "Nominal: Rp " + qris
+      );
+
+      document.getElementById("qris").value = "";
 
     }
 
@@ -216,6 +237,11 @@
     Rp <span id="saldo">0</span>
   </h3>
 
+  <h3>
+    Total QRIS:
+    Rp <span id="totalQris">0</span>
+  </h3>
+
   <hr>
 
   <h3>Tambah Kas Masuk</h3>
@@ -292,16 +318,30 @@
 
   <hr>
 
-  <h3>QRIS Hari Ini</h3>
+  <h3>Tambah QRIS</h3>
 
-  <input type="number"
-         placeholder="Catatan QRIS"
+  <input id="qris"
+         type="number"
+         placeholder="Nominal QRIS"
          style="
          width:100%;
          padding:12px;
          border-radius:8px;
          border:1px solid #ccc;
          ">
+
+  <button onclick="tambahQris()"
+          style="
+          margin-top:10px;
+          padding:12px;
+          width:100%;
+          background:blue;
+          color:white;
+          border:none;
+          border-radius:10px;
+          ">
+    Tambah QRIS
+  </button>
 
   <button onclick="logout()"
           style="
