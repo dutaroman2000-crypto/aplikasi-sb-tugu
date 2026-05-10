@@ -115,7 +115,6 @@ th{
   text-align:center;
   border-radius:10px;
   font-size:14px;
-  box-shadow:0 2px 6px rgba(0,0,0,0.2);
 }
 
 .penjualan{
@@ -145,6 +144,8 @@ let totalPengeluaranUmum = 0;
 let totalPengeluaranTabungan = 0;
 
 let transaksi = [];
+
+let logAktivitas = [];
 
 let userLogin = "";
 
@@ -183,6 +184,18 @@ function waktuSekarang(){
 
 }
 
+function tambahLog(teks){
+
+  logAktivitas.push({
+    waktu:waktuSekarang(),
+    user:userLogin,
+    aktivitas:teks
+  });
+
+  tampilkanLog();
+
+}
+
 function login(){
 
   var username =
@@ -207,15 +220,39 @@ function login(){
     document.getElementById("dashboard").style.display =
       "block";
 
+    tampilkanLaporan();
+
+    tampilkanHistoryKasir();
+
+    tampilkanLog();
+
     if(username=="owner"){
 
       document.getElementById("ownerArea").style.display =
         "block";
 
+      document.getElementById("areaPenjualan").style.display =
+        "none";
+
+      document.getElementById("areaPengeluaran").style.display =
+        "none";
+
+      document.getElementById("historyKasir").style.display =
+        "none";
+
     }else{
 
       document.getElementById("ownerArea").style.display =
         "none";
+
+      document.getElementById("areaPenjualan").style.display =
+        "block";
+
+      document.getElementById("areaPengeluaran").style.display =
+        "block";
+
+      document.getElementById("historyKasir").style.display =
+        "block";
 
     }
 
@@ -278,6 +315,202 @@ function tampilkanLaporan(){
 
 }
 
+function tampilkanLog(){
+
+  let isi="";
+
+  logAktivitas.forEach(function(item){
+
+    isi +=
+      "<tr>"+
+      "<td>"+item.waktu+"</td>"+
+      "<td>"+item.user+"</td>"+
+      "<td>"+item.aktivitas+"</td>"+
+      "</tr>";
+
+  });
+
+  document.getElementById("isiLog").innerHTML =
+    isi;
+
+}
+
+function tampilkanHistoryKasir(){
+
+  let isi="";
+
+  transaksi.forEach(function(item,index){
+
+    if(item.user==userLogin){
+
+      isi +=
+        "<tr>"+
+
+        "<td>"+item.waktu+"</td>"+
+
+        "<td>"+item.jenis+"</td>"+
+
+        "<td>"+item.uraian+"</td>"+
+
+        "<td>Rp "+formatRupiah(item.nominal)+"</td>"+
+
+        "<td>"+
+
+        "<button onclick='ubahTransaksi("+index+")' style='background:orange;color:white;border:none;padding:4px;border-radius:5px;margin-bottom:3px;'>Ubah</button><br>"+
+
+        "<button onclick='hapusTransaksi("+index+")' style='background:red;color:white;border:none;padding:4px;border-radius:5px;'>Hapus</button>"+
+
+        "</td>"+
+
+        "</tr>";
+
+    }
+
+  });
+
+  document.getElementById("isiHistoryKasir").innerHTML =
+    isi;
+
+}
+
+function ubahTransaksi(index){
+
+  let item = transaksi[index];
+
+  let nominalBaru =
+    prompt(
+      "Ubah nominal",
+      item.nominal
+    );
+
+  if(nominalBaru==null) return;
+
+  nominalBaru =
+    parseInt(
+      nominalBaru.replace(/\./g,'')
+    ) || 0;
+
+  let uraianBaru =
+    prompt(
+      "Ubah uraian",
+      item.uraian
+    );
+
+  if(uraianBaru==null) return;
+
+  uraianBaru =
+    formatUraian(uraianBaru);
+
+  tambahLog(
+    "Mengubah " +
+    item.jenis +
+    " dari Rp " +
+    formatRupiah(item.nominal) +
+    " menjadi Rp " +
+    formatRupiah(nominalBaru)
+  );
+
+  if(item.jenis=="Penjualan Tunai"){
+
+    saldo =
+      saldo - item.nominal + nominalBaru;
+
+    totalTunai =
+      totalTunai - item.nominal + nominalBaru;
+
+  }
+
+  if(item.jenis=="Penjualan QRIS"){
+
+    totalQris =
+      totalQris - item.nominal + nominalBaru;
+
+  }
+
+  if(item.jenis=="Pengeluaran Umum"){
+
+    saldo =
+      saldo + item.nominal - nominalBaru;
+
+    totalPengeluaranUmum =
+      totalPengeluaranUmum - item.nominal + nominalBaru;
+
+  }
+
+  if(item.jenis=="Pengeluaran Tabungan"){
+
+    saldo =
+      saldo + item.nominal - nominalBaru;
+
+    totalPengeluaranTabungan =
+      totalPengeluaranTabungan - item.nominal + nominalBaru;
+
+  }
+
+  item.nominal = nominalBaru;
+
+  item.uraian = uraianBaru;
+
+  updateDashboard();
+
+  tampilkanHistoryKasir();
+
+  tampilkanLaporan();
+
+}
+
+function hapusTransaksi(index){
+
+  let item = transaksi[index];
+
+  if(confirm("Yakin hapus transaksi?")){
+
+    tambahLog(
+      "Menghapus " +
+      item.jenis +
+      " Rp " +
+      formatRupiah(item.nominal)
+    );
+
+    if(item.jenis=="Penjualan Tunai"){
+
+      saldo -= item.nominal;
+      totalTunai -= item.nominal;
+
+    }
+
+    if(item.jenis=="Penjualan QRIS"){
+
+      totalQris -= item.nominal;
+
+    }
+
+    if(item.jenis=="Pengeluaran Umum"){
+
+      saldo += item.nominal;
+      totalPengeluaranUmum -= item.nominal;
+
+    }
+
+    if(item.jenis=="Pengeluaran Tabungan"){
+
+      saldo += item.nominal;
+      totalPengeluaranTabungan -= item.nominal;
+
+    }
+
+    transaksi.splice(index,1);
+
+    updateDashboard();
+
+    tampilkanHistoryKasir();
+
+    tampilkanLaporan();
+
+  }
+
+}
+
 function tambahPenjualanTunai(){
 
   let nominal =
@@ -303,12 +536,16 @@ function tambahPenjualanTunai(){
     nominal:nominal
   });
 
+  tambahLog(
+    "Tambah Penjualan Tunai Rp "+
+    formatRupiah(nominal)
+  );
+
   updateDashboard();
 
   tampilkanLaporan();
 
-  document.getElementById("tunaiNominal").value="";
-  document.getElementById("tunaiUraian").value="";
+  tampilkanHistoryKasir();
 
 }
 
@@ -335,12 +572,16 @@ function tambahPenjualanQris(){
     nominal:nominal
   });
 
+  tambahLog(
+    "Tambah Penjualan QRIS Rp "+
+    formatRupiah(nominal)
+  );
+
   updateDashboard();
 
   tampilkanLaporan();
 
-  document.getElementById("qrisNominal").value="";
-  document.getElementById("qrisUraian").value="";
+  tampilkanHistoryKasir();
 
 }
 
@@ -369,12 +610,16 @@ function tambahPengeluaranUmum(){
     nominal:nominal
   });
 
+  tambahLog(
+    "Tambah Pengeluaran Umum Rp "+
+    formatRupiah(nominal)
+  );
+
   updateDashboard();
 
   tampilkanLaporan();
 
-  document.getElementById("umumNominal").value="";
-  document.getElementById("umumUraian").value="";
+  tampilkanHistoryKasir();
 
 }
 
@@ -403,12 +648,16 @@ function tambahPengeluaranTabungan(){
     nominal:nominal
   });
 
+  tambahLog(
+    "Tambah Pengeluaran Tabungan Rp "+
+    formatRupiah(nominal)
+  );
+
   updateDashboard();
 
   tampilkanLaporan();
 
-  document.getElementById("tabunganNominal").value="";
-  document.getElementById("tabunganUraian").value="";
+  tampilkanHistoryKasir();
 
 }
 
@@ -422,7 +671,11 @@ function tambahPengeluaranTabungan(){
 
 <div class="card">
 
-<h1 style="color:orange;">
+<h1 style="
+color:#222;
+font-size:24px;
+font-weight:bold;
+">
 APLIKASI SB TUGU
 </h1>
 
@@ -447,8 +700,6 @@ LOGIN
 <div id="dashboard"
 style="display:none;">
 
-<!-- DASHBOARD -->
-
 <div class="card">
 
 <div style="
@@ -457,12 +708,14 @@ justify-content:space-between;
 align-items:center;
 ">
 
-<h2 style="
-color:orange;
+<h1 style="
+color:#222;
 margin:0;
+font-size:24px;
+font-weight:bold;
 ">
 DASHBOARD SB TUGU
-</h2>
+</h1>
 
 <h3 style="
 margin:0;
@@ -535,7 +788,7 @@ Rp <span id="totalPengeluaranTabungan">0</span>
 
 </div>
 
-<!-- AREA PENJUALAN -->
+<div id="areaPenjualan">
 
 <div class="area-title penjualan">
 AREA INPUT PENJUALAN
@@ -583,7 +836,9 @@ Simpan
 
 </div>
 
-<!-- AREA PENGELUARAN -->
+</div>
+
+<div id="areaPengeluaran">
 
 <div class="area-title pengeluaran">
 AREA INPUT PENGELUARAN
@@ -622,10 +877,36 @@ onkeyup="formatInputRupiah(this)">
 <input id="tabunganUraian"
 placeholder="Uraian">
 
-<button class="btn-red"
+<button class="btn-purple"
 onclick="tambahPengeluaranTabungan()">
 Simpan
 </button>
+
+</div>
+
+</div>
+
+</div>
+
+<div id="historyKasir">
+
+<div class="card">
+
+<h3>History Transaksi Kasir</h3>
+
+<table>
+
+<tr>
+<th>Waktu</th>
+<th>Jenis</th>
+<th>Uraian</th>
+<th>Nominal</th>
+<th>Aksi</th>
+</tr>
+
+<tbody id="isiHistoryKasir"></tbody>
+
+</table>
 
 </div>
 
@@ -636,7 +917,7 @@ style="display:none;">
 
 <div class="card">
 
-<h3>Laporan Transaksi</h3>
+<h3>Laporan Semua Transaksi</h3>
 
 <table>
 
@@ -649,6 +930,24 @@ style="display:none;">
 </tr>
 
 <tbody id="isiLaporan"></tbody>
+
+</table>
+
+</div>
+
+<div class="card">
+
+<h3>Log Aktivitas Kasir</h3>
+
+<table>
+
+<tr>
+<th>Waktu</th>
+<th>Kasir</th>
+<th>Aktivitas</th>
+</tr>
+
+<tbody id="isiLog"></tbody>
 
 </table>
 
