@@ -15,6 +15,56 @@
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js');
     }
+
+    function login() {
+
+      var username = document.getElementById("username").value;
+      var password = document.getElementById("password").value;
+
+      if (
+        (username === "owner" && password === "12345") ||
+        (username === "kasir1" && password === "12345") ||
+        (username === "kasir2" && password === "12345") ||
+        (username === "kasir3" && password === "12345") ||
+        (username === "kasir4" && password === "12345")
+      ) {
+
+        document.getElementById("loginPage").style.display = "none";
+        document.getElementById("dashboard").style.display = "block";
+
+      } else {
+        alert("Username atau Password salah");
+      }
+    }
+
+    function tambahKasMasuk() {
+
+      var nominal = parseInt(document.getElementById("masuk").value) || 0;
+
+      var saldo =
+        parseInt(document.getElementById("saldo").innerHTML);
+
+      saldo += nominal;
+
+      document.getElementById("saldo").innerHTML = saldo;
+
+      alert("Kas Masuk berhasil ditambahkan");
+    }
+
+    function tambahKasKeluar() {
+
+      var nominal = parseInt(document.getElementById("keluar").value) || 0;
+
+      var saldo =
+        parseInt(document.getElementById("saldo").innerHTML);
+
+      saldo -= nominal;
+
+      document.getElementById("saldo").innerHTML = saldo;
+
+      alert("Kas Keluar berhasil ditambahkan");
+    }
+
   </script>
 
 </head>
@@ -22,8 +72,10 @@
 <body style="
   font-family:Arial;
   background:#fff3e0;
-  padding:40px;
+  padding:20px;
 ">
+
+<div id="loginPage">
 
   <h1 style="color:orange;">
     APLIKASI SB TUGU
@@ -31,22 +83,122 @@
 
   <h2>Kas Warteg Online</h2>
 
-  <p>✅ Sistem Online</p>
-  <p>✅ Login Multi User</p>
-  <p>✅ Kas Tunai & QRIS</p>
-  <p>✅ Export PDF & Excel</p>
-  <p>✅ Backup Google Drive</p>
+  <input id="username"
+         placeholder="Username"
+         style="
+         width:100%;
+         padding:12px;
+         margin-top:10px;
+         border-radius:8px;
+         border:1px solid #ccc;
+         ">
 
-  <button style="
-    padding:12px 24px;
-    background:orange;
-    color:white;
-    border:none;
-    border-radius:10px;
-    font-size:16px;
-  ">
+  <input id="password"
+         type="password"
+         placeholder="Password"
+         style="
+         width:100%;
+         padding:12px;
+         margin-top:10px;
+         border-radius:8px;
+         border:1px solid #ccc;
+         ">
+
+  <button onclick="login()"
+          style="
+          margin-top:20px;
+          padding:12px 24px;
+          background:orange;
+          color:white;
+          border:none;
+          border-radius:10px;
+          font-size:16px;
+          width:100%;
+          ">
     LOGIN
   </button>
+
+</div>
+
+<div id="dashboard" style="display:none;">
+
+  <h2 style="color:orange;">
+    DASHBOARD SB TUGU
+  </h2>
+
+  <h3>
+    Saldo Tunai:
+    Rp <span id="saldo">0</span>
+  </h3>
+
+  <hr>
+
+  <h3>Tambah Kas Masuk</h3>
+
+  <input id="masuk"
+         type="number"
+         placeholder="Nominal Kas Masuk"
+         style="
+         width:100%;
+         padding:12px;
+         border-radius:8px;
+         border:1px solid #ccc;
+         ">
+
+  <button onclick="tambahKasMasuk()"
+          style="
+          margin-top:10px;
+          padding:12px;
+          width:100%;
+          background:green;
+          color:white;
+          border:none;
+          border-radius:10px;
+          ">
+    Tambah Kas Masuk
+  </button>
+
+  <hr>
+
+  <h3>Tambah Kas Keluar</h3>
+
+  <input id="keluar"
+         type="number"
+         placeholder="Nominal Kas Keluar"
+         style="
+         width:100%;
+         padding:12px;
+         border-radius:8px;
+         border:1px solid #ccc;
+         ">
+
+  <button onclick="tambahKasKeluar()"
+          style="
+          margin-top:10px;
+          padding:12px;
+          width:100%;
+          background:red;
+          color:white;
+          border:none;
+          border-radius:10px;
+          ">
+    Tambah Kas Keluar
+  </button>
+
+  <hr>
+
+  <h3>QRIS Hari Ini</h3>
+
+  <input type="number"
+         placeholder="Catatan QRIS"
+         style="
+         width:100%;
+         padding:12px;
+         border-radius:8px;
+         border:1px solid #ccc;
+         ">
+
+</div>
 
 </body>
 </html>
