@@ -22,11 +22,40 @@ let saldo =
 let totalQris =
   parseInt(localStorage.getItem("totalQris")) || 0;
 
+let transaksi =
+  JSON.parse(localStorage.getItem("transaksi")) || [];
+
 function simpanData() {
 
   localStorage.setItem("saldo", saldo);
 
   localStorage.setItem("totalQris", totalQris);
+
+  localStorage.setItem(
+    "transaksi",
+    JSON.stringify(transaksi)
+  );
+
+}
+
+function tampilkanLaporan() {
+
+  let isi = "";
+
+  transaksi.forEach(function(item) {
+
+    isi +=
+      "<tr>" +
+      "<td>" + item.waktu + "</td>" +
+      "<td>" + item.jenis + "</td>" +
+      "<td>" + item.uraian + "</td>" +
+      "<td>Rp " + item.nominal + "</td>" +
+      "</tr>";
+
+  });
+
+  document.getElementById("isiLaporan").innerHTML =
+    isi;
 
 }
 
@@ -58,14 +87,22 @@ function login() {
     document.getElementById("totalQris").innerHTML =
       totalQris;
 
+    tampilkanLaporan();
+
     if (username === "owner") {
 
       document.getElementById("menuOwner").style.display =
         "block";
 
+      document.getElementById("laporanOwner").style.display =
+        "block";
+
     } else {
 
       document.getElementById("menuOwner").style.display =
+        "none";
+
+      document.getElementById("laporanOwner").style.display =
         "none";
 
     }
@@ -88,6 +125,14 @@ function logout() {
 
 }
 
+function waktuSekarang() {
+
+  const sekarang = new Date();
+
+  return sekarang.toLocaleString("id-ID");
+
+}
+
 function tambahKasMasuk() {
 
   var nominal =
@@ -98,16 +143,21 @@ function tambahKasMasuk() {
 
   saldo += nominal;
 
+  transaksi.push({
+    waktu: waktuSekarang(),
+    jenis: "Kas Masuk",
+    uraian: uraian,
+    nominal: nominal
+  });
+
   document.getElementById("saldo").innerHTML =
     saldo;
 
   simpanData();
 
-  alert(
-    "Kas Masuk berhasil\n\n" +
-    "Uraian: " + uraian +
-    "\nNominal: Rp " + nominal
-  );
+  tampilkanLaporan();
+
+  alert("Kas Masuk berhasil");
 
   document.getElementById("masuk").value = "";
 
@@ -125,16 +175,21 @@ function tambahKasKeluar() {
 
   saldo -= nominal;
 
+  transaksi.push({
+    waktu: waktuSekarang(),
+    jenis: "Kas Keluar",
+    uraian: uraian,
+    nominal: nominal
+  });
+
   document.getElementById("saldo").innerHTML =
     saldo;
 
   simpanData();
 
-  alert(
-    "Kas Keluar berhasil\n\n" +
-    "Uraian: " + uraian +
-    "\nNominal: Rp " + nominal
-  );
+  tampilkanLaporan();
+
+  alert("Kas Keluar berhasil");
 
   document.getElementById("keluar").value = "";
 
@@ -149,15 +204,21 @@ function tambahQris() {
 
   totalQris += qris;
 
+  transaksi.push({
+    waktu: waktuSekarang(),
+    jenis: "QRIS",
+    uraian: "Pembayaran QRIS",
+    nominal: qris
+  });
+
   document.getElementById("totalQris").innerHTML =
     totalQris;
 
   simpanData();
 
-  alert(
-    "QRIS berhasil disimpan\n\n" +
-    "Nominal: Rp " + qris
-  );
+  tampilkanLaporan();
+
+  alert("QRIS berhasil disimpan");
 
   document.getElementById("qris").value = "";
 
@@ -165,12 +226,17 @@ function tambahQris() {
 
 function resetSaldo() {
 
-  if (confirm("Yakin reset semua saldo?")) {
+  if (confirm("Yakin reset semua data?")) {
 
     saldo = 0;
+
     totalQris = 0;
 
+    transaksi = [];
+
     simpanData();
+
+    tampilkanLaporan();
 
     document.getElementById("saldo").innerHTML =
       saldo;
@@ -178,7 +244,7 @@ function resetSaldo() {
     document.getElementById("totalQris").innerHTML =
       totalQris;
 
-    alert("Saldo berhasil direset");
+    alert("Semua data berhasil direset");
 
   }
 
@@ -411,8 +477,34 @@ color:white;
 border:none;
 border-radius:10px;
 ">
-Reset Semua Saldo
+Reset Semua Data
 </button>
+
+</div>
+
+<div id="laporanOwner" style="display:none;">
+
+<hr>
+
+<h3>LAPORAN TRANSAKSI</h3>
+
+<table border="1"
+width="100%"
+style="
+border-collapse:collapse;
+background:white;
+">
+
+<tr style="background:orange;color:white;">
+<th>Waktu</th>
+<th>Jenis</th>
+<th>Uraian</th>
+<th>Nominal</th>
+</tr>
+
+<tbody id="isiLaporan"></tbody>
+
+</table>
 
 </div>
 
