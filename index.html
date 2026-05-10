@@ -1,453 +1,279 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>SB TUGU BLUE PROFESSIONAL</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SB TUGU</title>
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Inter',sans-serif;
-}
-
 body{
-background:#eef3ff;
-color:#1e293b;
+font-family:Arial,sans-serif;
+margin:0;
+background:#edf4ff;
 }
-
-.login-page{
+.login{
 height:100vh;
 display:flex;
 align-items:center;
 justify-content:center;
-padding:20px;
-background:linear-gradient(135deg,#2563eb,#1d4ed8);
+background:#2563eb;
 }
-
-.login-box{
-width:100%;
-max-width:430px;
+.box{
 background:white;
-border-radius:24px;
-padding:35px;
-box-shadow:0 20px 40px rgba(0,0,0,0.15);
+padding:30px;
+border-radius:20px;
+width:90%;
+max-width:420px;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
 }
-
-.logo{
-font-size:32px;
-font-weight:700;
+h1{
+margin:0 0 10px;
 color:#2563eb;
-margin-bottom:10px;
 }
-
-.subtitle{
-color:#64748b;
-margin-bottom:25px;
-}
-
-.input-group{
-margin-bottom:18px;
-}
-
-.input-group label{
-display:block;
-font-size:14px;
-font-weight:600;
-margin-bottom:8px;
-}
-
-.input-group input{
+input{
 width:100%;
 padding:14px;
-border:1px solid #cbd5e1;
-border-radius:14px;
+margin-top:10px;
+border:1px solid #ccc;
+border-radius:12px;
+box-sizing:border-box;
 font-size:15px;
 }
-
-.password-wrap{
-position:relative;
-}
-
-.password-wrap button{
-position:absolute;
-right:10px;
-top:10px;
-border:none;
-background:none;
-cursor:pointer;
-font-size:18px;
-}
-
-.login-btn{
+button{
 width:100%;
 padding:14px;
+margin-top:12px;
 border:none;
-border-radius:14px;
+border-radius:12px;
 background:#2563eb;
 color:white;
-font-size:16px;
-font-weight:700;
+font-weight:bold;
+font-size:15px;
 cursor:pointer;
-margin-top:10px;
 }
-
-.app{
+#app{
 display:none;
+padding:15px;
 }
-
-.topbar{
+.top{
 background:white;
-padding:16px 22px;
+padding:18px;
+border-radius:18px;
 display:flex;
 justify-content:space-between;
 align-items:center;
-box-shadow:0 2px 10px rgba(0,0,0,0.05);
-position:sticky;
-top:0;
-z-index:100;
+margin-bottom:15px;
 }
-
-.brand{
-font-size:22px;
-font-weight:700;
-color:#2563eb;
-}
-
-.main{
-padding:16px;
-display:grid;
-grid-template-columns:260px 1fr;
-gap:16px;
-}
-
-.sidebar{
-background:white;
-border-radius:22px;
-padding:18px;
-height:calc(100vh - 100px);
-position:sticky;
-top:85px;
-}
-
-.menu-item{
-padding:12px 14px;
-border-radius:14px;
-margin-bottom:8px;
-font-weight:600;
-background:#eff6ff;
-color:#2563eb;
-}
-
-.content{
-display:flex;
-flex-direction:column;
-gap:16px;
-}
-
 .cards{
 display:grid;
-grid-template-columns:repeat(5,1fr);
-gap:12px;
+grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+gap:10px;
+margin-bottom:15px;
 }
-
 .card{
 background:white;
-border-radius:20px;
-padding:16px;
-box-shadow:0 3px 10px rgba(0,0,0,0.05);
-}
-
-.card-title{
-font-size:13px;
-color:#64748b;
-margin-bottom:8px;
-}
-
-.card-value{
-font-size:24px;
-font-weight:700;
-}
-
-.section{
-background:white;
-border-radius:22px;
 padding:18px;
-box-shadow:0 3px 10px rgba(0,0,0,0.05);
-}
-
-.section-title{
-font-size:18px;
-font-weight:700;
-margin-bottom:15px;
-color:#1e40af;
-}
-
-.form-grid{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:14px;
-}
-
-.form-card{
-background:#f8fbff;
-border:1px solid #dbeafe;
-padding:16px;
 border-radius:18px;
 }
-
-.form-card h3{
-margin-bottom:12px;
-font-size:16px;
-color:#1d4ed8;
+.card small{
+color:#666;
 }
-
-.form-card input{
-width:100%;
-padding:12px;
-border-radius:12px;
-border:1px solid #cbd5e1;
-margin-bottom:10px;
+.card h2{
+margin:8px 0 0;
+font-size:22px;
+color:#2563eb;
 }
-
-.save-btn{
-width:100%;
-padding:12px;
-border:none;
-border-radius:12px;
-background:#2563eb;
-color:white;
-font-weight:700;
-cursor:pointer;
+.section{
+background:white;
+padding:18px;
+border-radius:18px;
+margin-bottom:15px;
 }
-
-.table-wrap{
-overflow:auto;
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:12px;
 }
-
+.formbox{
+background:#f8fbff;
+padding:15px;
+border-radius:15px;
+border:1px solid #dbeafe;
+}
+.formbox h3{
+margin:0 0 10px;
+color:#2563eb;
+}
 table{
 width:100%;
 border-collapse:collapse;
+margin-top:10px;
 }
-
 th,td{
 padding:10px;
+border-bottom:1px solid #ddd;
 font-size:13px;
-border-bottom:1px solid #e2e8f0;
 text-align:left;
 }
-
 th{
 background:#eff6ff;
-color:#1d4ed8;
-position:sticky;
-top:0;
+color:#2563eb;
 }
-
-.action-btn{
-padding:6px 10px;
-border:none;
-border-radius:8px;
-font-size:12px;
-font-weight:600;
-cursor:pointer;
-color:white;
-}
-
-.edit-btn{
-background:#f59e0b;
-}
-
-.delete-btn{
-background:#ef4444;
-}
-
-@media(max-width:1000px){
-.cards{
-grid-template-columns:repeat(2,1fr);
-}
-
-.main{
-grid-template-columns:1fr;
-}
-
-.sidebar{
-height:auto;
-position:relative;
-top:0;
-}
-
-.form-grid{
-grid-template-columns:1fr;
-}
-}
+</style>
 </head>
 <body>
-<div class="login-page" id="loginPage">
-<div class="login-box">
-<div class="logo">SB TUGU</div>
-<div class="subtitle">Aplikasi Kasir Online Realtime</div>
-<div class="input-group">
-<label>Username</label>
-<input type="text" id="username" autocomplete="username" placeholder="Masukkan username">
-</div>
-<div class="input-group">
-<label>Password</label>
-<div class="password-wrap">
-<input type="password" id="password" autocomplete="current-password" placeholder="Masukkan password">
-<button onclick="togglePassword()">👁️</button>
+<div class="login" id="loginPage">
+<div class="box">
+<h1>SB TUGU</h1>
+<p>Aplikasi Kasir Realtime</p>
+<input type="text" id="username" placeholder="Username" autocomplete="username">
+<input type="password" id="password" placeholder="Password" autocomplete="current-password">
+<button onclick="login()">LOGIN</button>
 </div>
 </div>
-<button class="login-btn" onclick="login()">LOGIN</button>
+<div id="app">
+<div class="top">
+<div>
+<h2>Dashboard SB TUGU</h2>
+<div id="welcome"></div>
+</div>
+<div>
+<h3>Saldo Tunai</h3>
+<h2 id="saldo">Rp 0</h2>
 </div>
 </div>
-<div class="app" id="app">
-<div class="topbar">
-<div class="brand">SB TUGU</div>
-<div id="welcomeText">Selamat Datang</div>
-</div>
-<div class="main">
-<div class="sidebar">
-<div class="menu-item">Dashboard</div>
-<div class="menu-item">Penjualan</div>
-<div class="menu-item">Pengeluaran</div>
-<div class="menu-item">History</div>
-<div class="menu-item">Laporan</div>
-<div class="menu-item" onclick="logout()">Logout</div>
-</div>
-<div class="content">
 <div class="cards">
-<div class="card">
-<div class="card-title">Saldo Tunai</div>
-<div class="card-value" id="saldoTunai">Rp 0</div>
-</div>
-<div class="card">
-<div class="card-title">Total Tunai</div>
-<div class="card-value" id="totalTunai">Rp 0</div>
-</div>
-<div class="card">
-<div class="card-title">Total QRIS</div>
-<div class="card-value" id="totalQris">Rp 0</div>
-</div>
-<div class="card">
-<div class="card-title">Pengeluaran</div>
-<div class="card-value" id="totalPengeluaran">Rp 0</div>
-</div>
-<div class="card">
-<div class="card-title">Tabungan</div>
-<div class="card-value" id="totalTabungan">Rp 0</div>
-</div>
+<div class="card"><small>Total Tunai</small><h2 id="tunai">Rp 0</h2></div>
+<div class="card"><small>Total QRIS</small><h2 id="qris">Rp 0</h2></div>
+<div class="card"><small>Pengeluaran</small><h2 id="pengeluaran">Rp 0</h2></div>
+<div class="card"><small>Tabungan</small><h2 id="tabungan">Rp 0</h2></div>
 </div>
 <div class="section">
-<div class="section-title">Input Penjualan & Pengeluaran</div>
-<div class="form-grid">
-<div class="form-card">
+<h2>Input Transaksi</h2>
+<div class="grid">
+<div class="formbox">
 <h3>Penjualan Tunai</h3>
-<input type="text" id="tunaiNominal" placeholder="Nominal">
-<input type="text" id="tunaiUraian" placeholder="Uraian">
-<button class="save-btn">Simpan</button>
+<input id="tunaiNominal" placeholder="Nominal">
+<input id="tunaiUraian" placeholder="Uraian">
+<button onclick="simpan('Tunai')">Simpan</button>
 </div>
-<div class="form-card">
+<div class="formbox">
 <h3>Penjualan QRIS</h3>
-<input type="text" id="qrisNominal" placeholder="Nominal">
-<input type="text" id="qrisUraian" placeholder="Uraian">
-<button class="save-btn">Simpan</button>
+<input id="qrisNominal" placeholder="Nominal">
+<input id="qrisUraian" placeholder="Uraian">
+<button onclick="simpan('QRIS')">Simpan</button>
 </div>
-<div class="form-card">
+<div class="formbox">
 <h3>Pengeluaran Umum</h3>
-<input type="text" id="pengeluaranNominal" placeholder="Nominal">
-<input type="text" id="pengeluaranUraian" placeholder="Uraian">
-<button class="save-btn">Simpan</button>
+<input id="pengeluaranNominal" placeholder="Nominal">
+<input id="pengeluaranUraian" placeholder="Uraian">
+<button onclick="simpan('Pengeluaran')">Simpan</button>
 </div>
-<div class="form-card">
+<div class="formbox">
 <h3>Pengeluaran Tabungan</h3>
-<input type="text" id="tabunganNominal" placeholder="Nominal">
-<input type="text" id="tabunganUraian" placeholder="Uraian">
-<button class="save-btn">Simpan</button>
+<input id="tabunganNominal" placeholder="Nominal">
+<input id="tabunganUraian" placeholder="Uraian">
+<button onclick="simpan('Tabungan')">Simpan</button>
 </div>
 </div>
 </div>
 <div class="section">
-<div class="section-title">History Transaksi</div>
-<div class="table-wrap">
+<h2>History Transaksi</h2>
 <table>
 <thead>
 <tr>
 <th>Waktu</th>
-<th>Kasir</th>
 <th>Jenis</th>
 <th>Uraian</th>
 <th>Nominal</th>
-<th>Aksi</th>
 </tr>
 </thead>
-<tbody>
-<tr>
-<td>10:30</td>
-<td>Kasir1</td>
-<td>Tunai</td>
-<td>Nasi Goreng</td>
-<td>Rp 25.000</td>
-<td>
-<button class="action-btn edit-btn">Ubah</button>
-<button class="action-btn delete-btn">Hapus</button>
-</td>
-</tr>
-</tbody>
+<tbody id="history"></tbody>
 </table>
 </div>
 </div>
-</div>
-</div>
-</div>
 <script>
-function togglePassword(){
-const password=document.getElementById('password');
-password.type=password.type==='password'?'text':'password';
+let transaksi=[];
+
+function rupiah(n){
+return Number(n).toLocaleString('id-ID');
 }
 
 function login(){
-const username=document.getElementById('username').value;
-const password=document.getElementById('password').value;
+const u=document.getElementById('username').value;
+const p=document.getElementById('password').value;
 
-if(password==='12345'){
+if(p==='12345'){
 document.getElementById('loginPage').style.display='none';
 document.getElementById('app').style.display='block';
-document.getElementById('welcomeText').innerHTML='Login : '+username;
+document.getElementById('welcome').innerHTML='Login sebagai '+u;
 }else{
 alert('Password salah');
 }
 }
 
-function logout(){
-location.reload();
+function simpan(jenis){
+let nominal=0;
+let uraian='';
+
+if(jenis==='Tunai'){
+nominal=document.getElementById('tunaiNominal').value;
+uraian=document.getElementById('tunaiUraian').value;
 }
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAy2SdCWzkWfldozz0cBRL_ifP00IFb3vo",
-  authDomain: "sb-tugu-kasir.firebaseapp.com",
-  databaseURL: "https://sb-tugu-kasir-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "sb-tugu-kasir",
-  storageBucket: "sb-tugu-kasir.firebasestorage.app",
-  messagingSenderId: "953508498389",
-  appId: "1:953508498389:web:81b5720e8420a04cdb8b5c",
-  measurementId: "G-QDCMDN4K1K"
-};
+if(jenis==='QRIS'){
+nominal=document.getElementById('qrisNominal').value;
+uraian=document.getElementById('qrisUraian').value;
+}
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+if(jenis==='Pengeluaran'){
+nominal=document.getElementById('pengeluaranNominal').value;
+uraian=document.getElementById('pengeluaranUraian').value;
+}
 
-console.log('FIREBASE AKTIF');
-console.log('FIREBASE AKTIF');
-  
-</script>
+if(jenis==='Tabungan'){
+nominal=document.getElementById('tabunganNominal').value;
+uraian=document.getElementById('tabunganUraian').value;
+}
 
+transaksi.push({
+waktu:new Date().toLocaleTimeString('id-ID'),
+jenis:jenis,
+uraian:uraian,
+nominal:Number(nominal)
+});
+
+render();
+}
+
+function render(){
+let totalTunai=0;
+let totalQris=0;
+let totalPengeluaran=0;
+let totalTabungan=0;
+let isi='';
+
+transaksi.forEach(x=>{
+if(x.jenis==='Tunai') totalTunai+=x.nominal;
+if(x.jenis==='QRIS') totalQris+=x.nominal;
+if(x.jenis==='Pengeluaran') totalPengeluaran+=x.nominal;
+if(x.jenis==='Tabungan') totalTabungan+=x.nominal;
+
+isi+=`<tr>
+<td>${x.waktu}</td>
+<td>${x.jenis}</td>
+<td>${x.uraian}</td>
+<td>Rp ${rupiah(x.nominal)}</td>
+</tr>`;
+});
+
+const saldo=(totalTunai-totalPengeluaran-totalTabungan);
+
+document.getElementById('tunai').innerHTML='Rp '+rupiah(totalTunai);
+document.getElementById('qris').innerHTML='Rp '+rupiah(totalQris);
+document.getElementById('pengeluaran').innerHTML='Rp '+rupiah(totalPengeluaran);
+document.getElementById('tabungan').innerHTML='Rp '+rupiah(totalTabungan);
+document.getElementById('saldo').innerHTML='Rp '+rupiah(saldo);
+document.getElementById('history').innerHTML=isi;
+}
 </body>
-</html>  
-
+</html>
