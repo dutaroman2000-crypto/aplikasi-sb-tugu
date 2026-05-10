@@ -1,362 +1,153 @@
-<!DOCTYPE html>
-<html>
-<head>
+<script>
 
-  <title>APLIKASI SB TUGU</title>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js');
+}
 
-  <link rel="manifest" href="manifest.json">
+let saldo =
+  parseInt(localStorage.getItem("saldo")) || 0;
 
-  <meta name="theme-color" content="#ff9800">
+let totalQris =
+  parseInt(localStorage.getItem("totalQris")) || 0;
 
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
+function simpanData() {
 
-  <script>
+  localStorage.setItem("saldo", saldo);
 
-    if ('serviceWorker' in navigator') {
-      navigator.serviceWorker.register('/sw.js');
-    }
+  localStorage.setItem("totalQris", totalQris);
 
-    let totalQris = 0;
+}
 
-    function login() {
+function login() {
 
-      var username =
-        document.getElementById("username").value;
+  var username =
+    document.getElementById("username").value;
 
-      var password =
-        document.getElementById("password").value;
+  var password =
+    document.getElementById("password").value;
 
-      if (
-        (username === "owner" && password === "12345") ||
-        (username === "kasir1" && password === "12345") ||
-        (username === "kasir2" && password === "12345") ||
-        (username === "kasir3" && password === "12345") ||
-        (username === "kasir4" && password === "12345")
-      ) {
+  if (
+    (username === "owner" && password === "12345") ||
+    (username === "kasir1" && password === "12345") ||
+    (username === "kasir2" && password === "12345") ||
+    (username === "kasir3" && password === "12345") ||
+    (username === "kasir4" && password === "12345")
+  ) {
 
-        document.getElementById("loginPage").style.display =
-          "none";
+    document.getElementById("loginPage").style.display =
+      "none";
 
-        document.getElementById("dashboard").style.display =
-          "block";
+    document.getElementById("dashboard").style.display =
+      "block";
 
-      } else {
+    document.getElementById("saldo").innerHTML =
+      saldo;
 
-        alert("Username atau Password salah");
+    document.getElementById("totalQris").innerHTML =
+      totalQris;
 
-      }
+  } else {
 
-    }
+    alert("Username atau Password salah");
 
-    function logout() {
+  }
 
-      document.getElementById("dashboard").style.display =
-        "none";
+}
 
-      document.getElementById("loginPage").style.display =
-        "block";
+function logout() {
 
-    }
+  document.getElementById("dashboard").style.display =
+    "none";
 
-    function tambahKasMasuk() {
+  document.getElementById("loginPage").style.display =
+    "block";
 
-      var nominal =
-        parseInt(document.getElementById("masuk").value) || 0;
+}
 
-      var uraian =
-        document.getElementById("uraianMasuk").value;
+function tambahKasMasuk() {
 
-      var saldo =
-        parseInt(document.getElementById("saldo").innerHTML);
+  var nominal =
+    parseInt(document.getElementById("masuk").value) || 0;
 
-      saldo += nominal;
+  saldo += nominal;
 
-      document.getElementById("saldo").innerHTML =
-        saldo;
+  document.getElementById("saldo").innerHTML =
+    saldo;
 
-      alert(
-        "Kas Masuk berhasil\n\n" +
-        "Uraian: " + uraian +
-        "\nNominal: Rp " + nominal
-      );
+  simpanData();
 
-      document.getElementById("masuk").value = "";
-      document.getElementById("uraianMasuk").value = "";
+  alert("Kas Masuk berhasil");
 
-    }
+  document.getElementById("masuk").value = "";
 
-    function tambahKasKeluar() {
+}
 
-      var nominal =
-        parseInt(document.getElementById("keluar").value) || 0;
+function tambahKasKeluar() {
 
-      var uraian =
-        document.getElementById("uraianKeluar").value;
+  var nominal =
+    parseInt(document.getElementById("keluar").value) || 0;
 
-      var saldo =
-        parseInt(document.getElementById("saldo").innerHTML);
+  saldo -= nominal;
 
-      saldo -= nominal;
+  document.getElementById("saldo").innerHTML =
+    saldo;
 
-      document.getElementById("saldo").innerHTML =
-        saldo;
+  simpanData();
 
-      alert(
-        "Kas Keluar berhasil\n\n" +
-        "Uraian: " + uraian +
-        "\nNominal: Rp " + nominal
-      );
+  alert("Kas Keluar berhasil");
 
-      document.getElementById("keluar").value = "";
-      document.getElementById("uraianKeluar").value = "";
+  document.getElementById("keluar").value = "";
 
-    }
+}
 
-    function tambahQris() {
+function tambahQris() {
 
-      var qris =
-        parseInt(document.getElementById("qris").value) || 0;
+  var qris =
+    parseInt(document.getElementById("qris").value) || 0;
 
-      totalQris += qris;
+  totalQris += qris;
 
-      document.getElementById("totalQris").innerHTML =
-        totalQris;
+  document.getElementById("totalQris").innerHTML =
+    totalQris;
 
-      alert(
-        "QRIS berhasil ditambahkan\n\n" +
-        "Nominal: Rp " + qris
-      );
+  simpanData();
 
-      document.getElementById("qris").value = "";
+  alert("QRIS berhasil disimpan");
 
-    }
-
-    function updateJam() {
+  document.getElementById("qris").value = "";
 
-      const sekarang = new Date();
-
-      const hari = [
-        "Minggu",
-        "Senin",
-        "Selasa",
-        "Rabu",
-        "Kamis",
-        "Jumat",
-        "Sabtu"
-      ];
+}
 
-      const namaHari =
-        hari[sekarang.getDay()];
+function updateJam() {
 
-      const tanggal =
-        sekarang.toLocaleDateString("id-ID");
-
-      const jam =
-        sekarang.toLocaleTimeString("id-ID");
-
-      document.getElementById("jamOtomatis").innerHTML =
-        namaHari + ", " +
-        tanggal + " - " +
-        jam;
-
-    }
-
-    setInterval(updateJam, 1000);
-
-  </script>
-
-</head>
-
-<body style="
-  font-family:Arial;
-  background:#fff3e0;
-  padding:20px;
-">
-
-<div id="loginPage">
-
-  <h1 style="color:orange;">
-    APLIKASI SB TUGU
-  </h1>
-
-  <h2>Kas Warteg Online</h2>
-
-  <input id="username"
-         placeholder="Username"
-         style="
-         width:100%;
-         padding:12px;
-         margin-top:10px;
-         border-radius:8px;
-         border:1px solid #ccc;
-         ">
-
-  <input id="password"
-         type="password"
-         placeholder="Password"
-         style="
-         width:100%;
-         padding:12px;
-         margin-top:10px;
-         border-radius:8px;
-         border:1px solid #ccc;
-         ">
-
-  <button onclick="login()"
-          style="
-          margin-top:20px;
-          padding:12px 24px;
-          background:orange;
-          color:white;
-          border:none;
-          border-radius:10px;
-          font-size:16px;
-          width:100%;
-          ">
-    LOGIN
-  </button>
-
-</div>
-
-<div id="dashboard" style="display:none;">
-
-  <h2 style="color:orange;">
-    DASHBOARD SB TUGU
-  </h2>
-
-  <p id="jamOtomatis"
-     style="
-     font-weight:bold;
-     color:#555;
-     ">
-  </p>
-
-  <h3>
-    Saldo Tunai:
-    Rp <span id="saldo">0</span>
-  </h3>
-
-  <h3>
-    Total QRIS:
-    Rp <span id="totalQris">0</span>
-  </h3>
-
-  <hr>
-
-  <h3>Tambah Kas Masuk</h3>
-
-  <input id="uraianMasuk"
-         placeholder="Uraian Kas Masuk"
-         style="
-         width:100%;
-         padding:12px;
-         border-radius:8px;
-         border:1px solid #ccc;
-         margin-bottom:10px;
-         ">
-
-  <input id="masuk"
-         type="number"
-         placeholder="Nominal Kas Masuk"
-         style="
-         width:100%;
-         padding:12px;
-         border-radius:8px;
-         border:1px solid #ccc;
-         ">
-
-  <button onclick="tambahKasMasuk()"
-          style="
-          margin-top:10px;
-          padding:12px;
-          width:100%;
-          background:green;
-          color:white;
-          border:none;
-          border-radius:10px;
-          ">
-    Tambah Kas Masuk
-  </button>
-
-  <hr>
-
-  <h3>Tambah Kas Keluar</h3>
-
-  <input id="uraianKeluar"
-         placeholder="Uraian Kas Keluar"
-         style="
-         width:100%;
-         padding:12px;
-         border-radius:8px;
-         border:1px solid #ccc;
-         margin-bottom:10px;
-         ">
-
-  <input id="keluar"
-         type="number"
-         placeholder="Nominal Kas Keluar"
-         style="
-         width:100%;
-         padding:12px;
-         border-radius:8px;
-         border:1px solid #ccc;
-         ">
-
-  <button onclick="tambahKasKeluar()"
-          style="
-          margin-top:10px;
-          padding:12px;
-          width:100%;
-          background:red;
-          color:white;
-          border:none;
-          border-radius:10px;
-          ">
-    Tambah Kas Keluar
-  </button>
-
-  <hr>
-
-  <h3>Tambah QRIS</h3>
-
-  <input id="qris"
-         type="number"
-         placeholder="Nominal QRIS"
-         style="
-         width:100%;
-         padding:12px;
-         border-radius:8px;
-         border:1px solid #ccc;
-         ">
-
-  <button onclick="tambahQris()"
-          style="
-          margin-top:10px;
-          padding:12px;
-          width:100%;
-          background:blue;
-          color:white;
-          border:none;
-          border-radius:10px;
-          ">
-    Tambah QRIS
-  </button>
-
-  <button onclick="logout()"
-          style="
-          margin-top:20px;
-          padding:12px;
-          width:100%;
-          background:gray;
-          color:white;
-          border:none;
-          border-radius:10px;
-          ">
-    Kembali ke Home
-  </button>
-
-</div>
-
-</body>
-</html>
+  const sekarang = new Date();
+
+  const hari = [
+    "Minggu",
+    "Senin",
+    "Selasa",
+    "Rabu",
+    "Kamis",
+    "Jumat",
+    "Sabtu"
+  ];
+
+  const namaHari =
+    hari[sekarang.getDay()];
+
+  const tanggal =
+    sekarang.toLocaleDateString("id-ID");
+
+  const jam =
+    sekarang.toLocaleTimeString("id-ID");
+
+  document.getElementById("jamOtomatis").innerHTML =
+    namaHari + ", " +
+    tanggal + " - " +
+    jam;
+
+}
+
+setInterval(updateJam, 1000);
+
+</script>
