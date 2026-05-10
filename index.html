@@ -12,39 +12,54 @@ body{
   font-family:Arial;
   background:#f5f5f5;
   margin:0;
-  padding:15px;
+  padding:10px;
 }
 
 .card{
   background:white;
   border-radius:15px;
-  padding:15px;
-  margin-bottom:15px;
+  padding:12px;
+  margin-bottom:10px;
   box-shadow:0 2px 8px rgba(0,0,0,0.1);
 }
 
+.summary-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin-bottom:10px;
+}
+
+.transaksi-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
+
 .summary{
-  border-left:8px solid orange;
+  border-left:6px solid orange;
 }
 
 input{
   width:100%;
-  padding:12px;
-  margin-top:10px;
+  padding:10px;
+  margin-top:8px;
   border-radius:10px;
   border:1px solid #ccc;
   box-sizing:border-box;
+  font-size:14px;
 }
 
 button{
   width:100%;
-  padding:12px;
+  padding:10px;
   margin-top:10px;
   border:none;
   border-radius:10px;
   color:white;
   font-weight:bold;
   cursor:pointer;
+  font-size:14px;
 }
 
 .btn-orange{
@@ -83,13 +98,25 @@ table{
 
 th, td{
   border:1px solid #ddd;
-  padding:8px;
-  font-size:12px;
+  padding:6px;
+  font-size:11px;
 }
 
 th{
   background:orange;
   color:white;
+}
+
+@media(max-width:700px){
+
+  .summary-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .transaksi-grid{
+    grid-template-columns:1fr;
+  }
+
 }
 
 </style>
@@ -139,6 +166,21 @@ function waktuSekarang(){
 
 }
 
+function formatInputRupiah(input){
+
+  let angka =
+    input.value.replace(/\D/g,'');
+
+  if(angka==""){
+    input.value="";
+    return;
+  }
+
+  input.value =
+    parseInt(angka).toLocaleString("id-ID");
+
+}
+
 function simpanData(){
 
   localStorage.setItem("saldo", saldo);
@@ -172,9 +214,9 @@ function simpanData(){
 function tambahLog(teks){
 
   logAktivitas.push({
-    waktu: waktuSekarang(),
-    user: userLogin,
-    aktivitas: teks
+    waktu:waktuSekarang(),
+    user:userLogin,
+    aktivitas:teks
   });
 
   tampilkanLog();
@@ -265,7 +307,10 @@ function updateDashboard(){
 function tambahPenjualanTunai(){
 
   var nominal =
-    parseInt(document.getElementById("tunaiNominal").value) || 0;
+    parseInt(
+      document.getElementById("tunaiNominal")
+      .value.replace(/\./g,'')
+    ) || 0;
 
   var uraian =
     formatUraian(
@@ -285,7 +330,7 @@ function tambahPenjualanTunai(){
   });
 
   tambahLog(
-    "Menambah Penjualan Tunai Rp " +
+    "Tambah Penjualan Tunai Rp " +
     formatRupiah(nominal) +
     " - " + uraian
   );
@@ -304,7 +349,10 @@ function tambahPenjualanTunai(){
 function tambahPenjualanQris(){
 
   var nominal =
-    parseInt(document.getElementById("qrisNominal").value) || 0;
+    parseInt(
+      document.getElementById("qrisNominal")
+      .value.replace(/\./g,'')
+    ) || 0;
 
   var uraian =
     formatUraian(
@@ -322,7 +370,7 @@ function tambahPenjualanQris(){
   });
 
   tambahLog(
-    "Menambah Penjualan QRIS Rp " +
+    "Tambah Penjualan QRIS Rp " +
     formatRupiah(nominal) +
     " - " + uraian
   );
@@ -341,7 +389,10 @@ function tambahPenjualanQris(){
 function tambahPengeluaranUmum(){
 
   var nominal =
-    parseInt(document.getElementById("umumNominal").value) || 0;
+    parseInt(
+      document.getElementById("umumNominal")
+      .value.replace(/\./g,'')
+    ) || 0;
 
   var uraian =
     formatUraian(
@@ -361,7 +412,7 @@ function tambahPengeluaranUmum(){
   });
 
   tambahLog(
-    "Menambah Pengeluaran Umum Rp " +
+    "Tambah Pengeluaran Umum Rp " +
     formatRupiah(nominal) +
     " - " + uraian
   );
@@ -380,7 +431,10 @@ function tambahPengeluaranUmum(){
 function tambahPengeluaranTabungan(){
 
   var nominal =
-    parseInt(document.getElementById("tabunganNominal").value) || 0;
+    parseInt(
+      document.getElementById("tabunganNominal")
+      .value.replace(/\./g,'')
+    ) || 0;
 
   var uraian =
     formatUraian(
@@ -400,7 +454,7 @@ function tambahPengeluaranTabungan(){
   });
 
   tambahLog(
-    "Menambah Pengeluaran Tabungan Rp " +
+    "Tambah Pengeluaran Tabungan Rp " +
     formatRupiah(nominal) +
     " - " + uraian
   );
@@ -527,45 +581,52 @@ DASHBOARD SB TUGU
 
 </div>
 
+<div class="summary-grid">
+
 <div class="card summary">
-<h3>Total Penjualan Tunai</h3>
+<h4>Total Penjualan Tunai</h4>
 <h2>Rp <span id="totalTunai">0</span></h2>
 </div>
 
 <div class="card summary">
-<h3>Total Penjualan QRIS</h3>
+<h4>Total Penjualan QRIS</h4>
 <h2>Rp <span id="totalQris">0</span></h2>
 </div>
 
 <div class="card summary">
-<h3>Total Pengeluaran Umum</h3>
+<h4>Total Pengeluaran Umum</h4>
 <h2>Rp <span id="totalPengeluaranUmum">0</span></h2>
 </div>
 
 <div class="card summary">
-<h3>Total Pengeluaran Tabungan</h3>
+<h4>Total Pengeluaran Tabungan</h4>
 <h2>Rp <span id="totalPengeluaranTabungan">0</span></h2>
 </div>
 
 <div class="card summary">
-<h3>Saldo Uang Tunai</h3>
+<h4>Saldo Uang Tunai</h4>
 <h2>Rp <span id="saldo">0</span></h2>
 </div>
+
+</div>
+
+<div class="transaksi-grid">
 
 <div class="card">
 
 <h3>Penjualan Tunai</h3>
 
 <input id="tunaiNominal"
-type="number"
-placeholder="Nominal">
+type="text"
+placeholder="Nominal"
+onkeyup="formatInputRupiah(this)">
 
 <input id="tunaiUraian"
 placeholder="Uraian">
 
 <button class="btn-green"
 onclick="tambahPenjualanTunai()">
-Simpan Penjualan Tunai
+Simpan
 </button>
 
 </div>
@@ -575,15 +636,16 @@ Simpan Penjualan Tunai
 <h3>Penjualan QRIS</h3>
 
 <input id="qrisNominal"
-type="number"
-placeholder="Nominal">
+type="text"
+placeholder="Nominal"
+onkeyup="formatInputRupiah(this)">
 
 <input id="qrisUraian"
 placeholder="Uraian">
 
 <button class="btn-blue"
 onclick="tambahPenjualanQris()">
-Simpan Penjualan QRIS
+Simpan
 </button>
 
 </div>
@@ -593,15 +655,16 @@ Simpan Penjualan QRIS
 <h3>Pengeluaran Umum</h3>
 
 <input id="umumNominal"
-type="number"
-placeholder="Nominal">
+type="text"
+placeholder="Nominal"
+onkeyup="formatInputRupiah(this)">
 
 <input id="umumUraian"
 placeholder="Uraian">
 
 <button class="btn-red"
 onclick="tambahPengeluaranUmum()">
-Simpan Pengeluaran Umum
+Simpan
 </button>
 
 </div>
@@ -611,16 +674,19 @@ Simpan Pengeluaran Umum
 <h3>Pengeluaran Tabungan</h3>
 
 <input id="tabunganNominal"
-type="number"
-placeholder="Nominal">
+type="text"
+placeholder="Nominal"
+onkeyup="formatInputRupiah(this)">
 
 <input id="tabunganUraian"
 placeholder="Uraian">
 
 <button class="btn-purple"
 onclick="tambahPengeluaranTabungan()">
-Simpan Pengeluaran Tabungan
+Simpan
 </button>
+
+</div>
 
 </div>
 
