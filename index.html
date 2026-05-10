@@ -111,16 +111,47 @@ button{
 table{
   width:100%;
   border-collapse:collapse;
+  table-layout:fixed;
 }
 
 th, td{
   border:1px solid #ddd;
-  padding:3px;
-  font-size:9px;
+  padding:2px;
+  font-size:8px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
 }
 
 th{
   background:orange;
+  color:white;
+}
+
+.col-waktu{
+  width:52px;
+}
+
+.col-jenis{
+  width:42px;
+}
+
+.col-nominal{
+  width:55px;
+}
+
+.col-aksi{
+  width:72px;
+  text-align:center;
+}
+
+.aksi-btn{
+  display:inline-block;
+  width:32px;
+  padding:2px;
+  font-size:8px;
+  border:none;
+  border-radius:4px;
   color:white;
 }
 
@@ -197,7 +228,7 @@ function formatUraian(teks){
 
 function waktuSekarang(){
 
-  return new Date().toLocaleString("id-ID");
+  return new Date().toLocaleTimeString("id-ID");
 
 }
 
@@ -362,19 +393,19 @@ function tampilkanHistoryKasir(){
     isi +=
     "<tr>"+
 
-    "<td>"+item.waktu+"</td>"+
+    "<td class='col-waktu'>"+item.waktu+"</td>"+
 
-    "<td>"+item.jenis+"</td>"+
+    "<td class='col-jenis'>"+item.jenis+"</td>"+
 
     "<td>"+item.uraian+"</td>"+
 
-    "<td>Rp "+formatRupiah(item.nominal)+"</td>"+
+    "<td class='col-nominal'>Rp "+formatRupiah(item.nominal)+"</td>"+
 
-    "<td style='white-space:nowrap;'>"+
+    "<td class='col-aksi'>"+
 
-    "<button onclick='ubahTransaksi("+indexAsli+")' style='background:orange;color:white;border:none;padding:3px 5px;border-radius:4px;font-size:9px;margin-right:2px;'>Ubah</button>"+
+    "<button class='aksi-btn' onclick='ubahTransaksi("+indexAsli+")' style='background:orange;margin-right:2px;'>Ubah</button>"+
 
-    "<button onclick='hapusTransaksi("+indexAsli+")' style='background:red;color:white;border:none;padding:3px 5px;border-radius:4px;font-size:9px;'>Hapus</button>"+
+    "<button class='aksi-btn' onclick='hapusTransaksi("+indexAsli+")' style='background:red;'>Hapus</button>"+
 
     "</td>"+
 
@@ -405,12 +436,6 @@ function ubahTransaksi(index){
 
   uraianBaru =
     formatUraian(uraianBaru);
-
-  tambahLog(
-    "Mengubah "+item.jenis+
-    " Rp "+formatRupiah(item.nominal)+
-    " menjadi Rp "+formatRupiah(nominalBaru)
-  );
 
   if(item.jenis=="Penjualan Tunai"){
 
@@ -449,6 +474,12 @@ function ubahTransaksi(index){
 
   }
 
+  tambahLog(
+    "Mengubah "+item.jenis+
+    " Rp "+formatRupiah(item.nominal)+
+    " menjadi Rp "+formatRupiah(nominalBaru)
+  );
+
   item.nominal = nominalBaru;
   item.uraian = uraianBaru;
 
@@ -463,11 +494,6 @@ function hapusTransaksi(index){
   let item = transaksi[index];
 
   if(confirm("Yakin hapus transaksi?")){
-
-    tambahLog(
-      "Menghapus "+item.jenis+
-      " Rp "+formatRupiah(item.nominal)
-    );
 
     if(item.jenis=="Penjualan Tunai"){
 
@@ -495,6 +521,11 @@ function hapusTransaksi(index){
       totalPengeluaranTabungan -= item.nominal;
 
     }
+
+    tambahLog(
+      "Menghapus "+item.jenis+
+      " Rp "+formatRupiah(item.nominal)
+    );
 
     transaksi.splice(index,1);
 
@@ -525,13 +556,13 @@ function tambahPenjualanTunai(){
   transaksi.push({
     waktu:waktuSekarang(),
     user:userLogin,
-    jenis:"Penjualan Tunai",
+    jenis:"Tunai",
     uraian:uraian,
     nominal:nominal
   });
 
   tambahLog(
-    "Tambah Penjualan Tunai Rp "+
+    "Tambah Tunai Rp "+
     formatRupiah(nominal)
   );
 
@@ -563,13 +594,13 @@ function tambahPenjualanQris(){
   transaksi.push({
     waktu:waktuSekarang(),
     user:userLogin,
-    jenis:"Penjualan QRIS",
+    jenis:"QRIS",
     uraian:uraian,
     nominal:nominal
   });
 
   tambahLog(
-    "Tambah Penjualan QRIS Rp "+
+    "Tambah QRIS Rp "+
     formatRupiah(nominal)
   );
 
@@ -602,13 +633,13 @@ function tambahPengeluaranUmum(){
   transaksi.push({
     waktu:waktuSekarang(),
     user:userLogin,
-    jenis:"Pengeluaran Umum",
+    jenis:"Pengeluaran",
     uraian:uraian,
     nominal:nominal
   });
 
   tambahLog(
-    "Tambah Pengeluaran Umum Rp "+
+    "Tambah Pengeluaran Rp "+
     formatRupiah(nominal)
   );
 
@@ -641,13 +672,13 @@ function tambahPengeluaranTabungan(){
   transaksi.push({
     waktu:waktuSekarang(),
     user:userLogin,
-    jenis:"Pengeluaran Tabungan",
+    jenis:"Tabungan",
     uraian:uraian,
     nominal:nominal
   });
 
   tambahLog(
-    "Tambah Pengeluaran Tabungan Rp "+
+    "Tambah Tabungan Rp "+
     formatRupiah(nominal)
   );
 
@@ -718,7 +749,7 @@ color:green;
 text-align:right;
 font-size:11px;
 ">
-Saldo Uang Tunai<br>
+Saldo Tunai<br>
 Rp <span id="saldo">0</span>
 </h3>
 
@@ -736,12 +767,12 @@ margin-bottom:4px;
 <div>
 
 <div class="card summary">
-<h4>Total Penjualan Tunai</h4>
+<h4>Total Tunai</h4>
 <h2>Rp <span id="totalTunai">0</span></h2>
 </div>
 
 <div class="card summary">
-<h4>Total Penjualan QRIS</h4>
+<h4>Total QRIS</h4>
 <h2>Rp <span id="totalQris">0</span></h2>
 </div>
 
@@ -750,12 +781,12 @@ margin-bottom:4px;
 <div>
 
 <div class="card summary">
-<h4>Total Pengeluaran Umum</h4>
+<h4>Total Pengeluaran</h4>
 <h2>Rp <span id="totalPengeluaranUmum">0</span></h2>
 </div>
 
 <div class="card summary">
-<h4>Total Pengeluaran Tabungan</h4>
+<h4>Total Tabungan</h4>
 <h2>Rp <span id="totalPengeluaranTabungan">0</span></h2>
 </div>
 
@@ -867,16 +898,16 @@ Simpan
 
 <div class="card">
 
-<h3>History Transaksi Kasir (5 Terakhir)</h3>
+<h3>History Kasir (5 Terakhir)</h3>
 
 <table>
 
 <tr>
-<th>Waktu</th>
-<th>Jenis</th>
+<th class="col-waktu">Waktu</th>
+<th class="col-jenis">Jenis</th>
 <th>Uraian</th>
-<th>Nominal</th>
-<th>Aksi</th>
+<th class="col-nominal">Nominal</th>
+<th class="col-aksi">Aksi</th>
 </tr>
 
 <tbody id="isiHistoryKasir"></tbody>
@@ -891,7 +922,7 @@ Simpan
 
 <div class="card">
 
-<h3>Laporan Semua Transaksi</h3>
+<h3>Semua Transaksi</h3>
 
 <table>
 
@@ -911,7 +942,7 @@ Simpan
 
 <div class="card">
 
-<h3>Log Aktivitas Kasir</h3>
+<h3>Log Aktivitas</h3>
 
 <table>
 
