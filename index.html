@@ -23,19 +23,6 @@ body{
   box-shadow:0 1px 4px rgba(0,0,0,0.08);
 }
 
-.summary-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:6px;
-  margin-bottom:6px;
-}
-
-.transaksi-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:6px;
-}
-
 .summary{
   border-left:4px solid orange;
 }
@@ -48,7 +35,13 @@ body{
 
 .summary h2{
   margin:4px 0 0 0;
-  font-size:16px;
+  font-size:15px;
+}
+
+.transaksi-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:6px;
 }
 
 input{
@@ -73,10 +66,6 @@ button{
   font-size:12px;
 }
 
-h1,h2,h3,h4{
-  margin:3px 0;
-}
-
 .btn-orange{
   background:orange;
 }
@@ -95,10 +84,6 @@ h1,h2,h3,h4{
 
 .btn-purple{
   background:purple;
-}
-
-.btn-black{
-  background:black;
 }
 
 .btn-gray{
@@ -122,11 +107,26 @@ th{
   color:white;
 }
 
-@media(max-width:700px){
+.area-title{
+  margin:12px 0;
+  padding:8px;
+  color:white;
+  font-weight:bold;
+  text-align:center;
+  border-radius:10px;
+  font-size:14px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.2);
+}
 
-  .summary-grid{
-    grid-template-columns:1fr 1fr;
-  }
+.penjualan{
+  background:orange;
+}
+
+.pengeluaran{
+  background:red;
+}
+
+@media(max-width:700px){
 
   .transaksi-grid{
     grid-template-columns:1fr;
@@ -307,6 +307,9 @@ function tambahPenjualanTunai(){
 
   tampilkanLaporan();
 
+  document.getElementById("tunaiNominal").value="";
+  document.getElementById("tunaiUraian").value="";
+
 }
 
 function tambahPenjualanQris(){
@@ -335,6 +338,9 @@ function tambahPenjualanQris(){
   updateDashboard();
 
   tampilkanLaporan();
+
+  document.getElementById("qrisNominal").value="";
+  document.getElementById("qrisUraian").value="";
 
 }
 
@@ -367,6 +373,9 @@ function tambahPengeluaranUmum(){
 
   tampilkanLaporan();
 
+  document.getElementById("umumNominal").value="";
+  document.getElementById("umumUraian").value="";
+
 }
 
 function tambahPengeluaranTabungan(){
@@ -397,6 +406,9 @@ function tambahPengeluaranTabungan(){
   updateDashboard();
 
   tampilkanLaporan();
+
+  document.getElementById("tabunganNominal").value="";
+  document.getElementById("tabunganUraian").value="";
 
 }
 
@@ -435,41 +447,98 @@ LOGIN
 <div id="dashboard"
 style="display:none;">
 
+<!-- DASHBOARD -->
+
 <div class="card">
 
-<h2 style="color:orange;">
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+">
+
+<h2 style="
+color:orange;
+margin:0;
+">
 DASHBOARD SB TUGU
+</h2>
+
+<h3 style="
+margin:0;
+color:green;
+text-align:right;
+font-size:13px;
+">
+Saldo Uang Tunai<br>
+Rp <span id="saldo">0</span>
+</h3>
+
+</div>
+
+</div>
+
+<div style="
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:6px;
+margin-bottom:6px;
+">
+
+<div>
+
+<div class="card summary">
+
+<h4>Total Penjualan Tunai</h4>
+
+<h2>
+Rp <span id="totalTunai">0</span>
 </h2>
 
 </div>
 
-<div class="summary-grid">
-
 <div class="card summary">
-<h4>Total Penjualan Tunai</h4>
-<h2>Rp <span id="totalTunai">0</span></h2>
-</div>
 
-<div class="card summary">
 <h4>Total Penjualan QRIS</h4>
-<h2>Rp <span id="totalQris">0</span></h2>
+
+<h2>
+Rp <span id="totalQris">0</span>
+</h2>
+
 </div>
 
+</div>
+
+<div>
+
 <div class="card summary">
+
 <h4>Total Pengeluaran Umum</h4>
-<h2>Rp <span id="totalPengeluaranUmum">0</span></h2>
+
+<h2>
+Rp <span id="totalPengeluaranUmum">0</span>
+</h2>
+
 </div>
 
 <div class="card summary">
+
 <h4>Total Pengeluaran Tabungan</h4>
-<h2>Rp <span id="totalPengeluaranTabungan">0</span></h2>
+
+<h2>
+Rp <span id="totalPengeluaranTabungan">0</span>
+</h2>
+
 </div>
 
-<div class="card summary">
-<h4>Saldo Uang Tunai</h4>
-<h2>Rp <span id="saldo">0</span></h2>
 </div>
 
+</div>
+
+<!-- AREA PENJUALAN -->
+
+<div class="area-title penjualan">
+AREA INPUT PENJUALAN
 </div>
 
 <div class="transaksi-grid">
@@ -512,6 +581,16 @@ Simpan
 
 </div>
 
+</div>
+
+<!-- AREA PENGELUARAN -->
+
+<div class="area-title pengeluaran">
+AREA INPUT PENGELUARAN
+</div>
+
+<div class="transaksi-grid">
+
 <div class="card">
 
 <h3>Pengeluaran Umum</h3>
@@ -543,7 +622,7 @@ onkeyup="formatInputRupiah(this)">
 <input id="tabunganUraian"
 placeholder="Uraian">
 
-<button class="btn-purple"
+<button class="btn-red"
 onclick="tambahPengeluaranTabungan()">
 Simpan
 </button>
