@@ -3,13 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SB TUGU FINAL</title>
+<title>SB TUGU PROFESSIONAL</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-body{
-font-family:Arial,sans-serif;
+*{
 margin:0;
-background:#eef4ff;
+padding:0;
+box-sizing:border-box;
+font-family:'Inter',sans-serif;
+}
+
+body{
+background:#edf4ff;
+color:#1e293b;
 }
 
 .login-page{
@@ -17,91 +25,172 @@ height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
-background:#2563eb;
+background:linear-gradient(135deg,#2563eb,#1d4ed8);
 padding:20px;
 }
 
 .login-box{
 background:white;
-padding:30px;
-border-radius:20px;
 width:100%;
-max-width:420px;
-box-shadow:0 10px 30px rgba(0,0,0,0.2);
+max-width:430px;
+padding:35px;
+border-radius:28px;
+box-shadow:0 20px 50px rgba(0,0,0,0.18);
+}
+
+.logo{
+font-size:34px;
+font-weight:700;
+color:#2563eb;
+margin-bottom:8px;
+}
+
+.subtitle{
+color:#64748b;
+margin-bottom:24px;
 }
 
 input{
 width:100%;
-padding:14px;
-margin-top:10px;
-border:1px solid #ccc;
-border-radius:12px;
-box-sizing:border-box;
+padding:15px;
+border-radius:14px;
+border:1px solid #cbd5e1;
+margin-top:12px;
+font-size:15px;
 }
 
 button{
+cursor:pointer;
+}
+
+.login-btn{
 width:100%;
-padding:14px;
-margin-top:12px;
+padding:15px;
 border:none;
-border-radius:12px;
+border-radius:14px;
 background:#2563eb;
 color:white;
-font-weight:bold;
-cursor:pointer;
+font-weight:700;
+margin-top:16px;
+font-size:15px;
 }
 
 #app{
 display:none;
-padding:15px;
+}
+
+.layout{
+display:flex;
+min-height:100vh;
 }
 
 .sidebar{
+width:240px;
 background:#1e3a8a;
+padding:20px;
 color:white;
-padding:15px;
-border-radius:15px;
-margin-bottom:15px;
+}
+
+.sidebar h2{
+margin-bottom:28px;
+font-size:26px;
 }
 
 .menu{
-padding:12px;
+padding:14px;
 margin-bottom:10px;
-background:rgba(255,255,255,0.1);
-border-radius:10px;
+border-radius:14px;
+background:rgba(255,255,255,0.08);
+font-weight:600;
+}
+
+.content{
+flex:1;
+padding:18px;
+}
+
+.topbar{
+display:flex;
+justify-content:flex-end;
+margin-bottom:16px;
+}
+
+.saldo-box{
+background:white;
+padding:18px 24px;
+border-radius:22px;
+box-shadow:0 3px 10px rgba(0,0,0,0.05);
+text-align:right;
+}
+
+.saldo-box small{
+color:#64748b;
+}
+
+.saldo-box h2{
+color:#16a34a;
+font-size:30px;
+margin-top:6px;
 }
 
 .cards{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-gap:12px;
-margin-bottom:15px;
+gap:14px;
+margin-bottom:16px;
 }
 
 .card{
 background:white;
 padding:18px;
-border-radius:18px;
+border-radius:22px;
+box-shadow:0 3px 10px rgba(0,0,0,0.05);
+}
+
+.card small{
+color:#64748b;
+}
+
+.card h2{
+margin-top:8px;
+color:#2563eb;
 }
 
 .section{
 background:white;
-padding:18px;
-border-radius:18px;
-margin-bottom:15px;
+padding:20px;
+border-radius:24px;
+margin-bottom:16px;
+box-shadow:0 3px 10px rgba(0,0,0,0.05);
 }
 
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:12px;
+grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+gap:14px;
 }
 
 .formbox{
 background:#f8fbff;
-padding:15px;
-border-radius:15px;
+padding:18px;
+border-radius:20px;
 border:1px solid #dbeafe;
+}
+
+.formbox h3{
+margin-bottom:12px;
+color:#2563eb;
+}
+
+.save-btn{
+width:100%;
+padding:13px;
+border:none;
+border-radius:14px;
+background:#2563eb;
+color:white;
+font-weight:700;
+margin-top:10px;
 }
 
 table{
@@ -110,14 +199,31 @@ border-collapse:collapse;
 }
 
 th,td{
-padding:10px;
-border-bottom:1px solid #ddd;
+padding:12px;
+border-bottom:1px solid #e2e8f0;
 text-align:left;
 font-size:13px;
 }
 
 th{
 background:#eff6ff;
+color:#2563eb;
+}
+
+.logout{
+background:#ef4444;
+}
+
+@media(max-width:900px){
+
+.layout{
+flex-direction:column;
+}
+
+.sidebar{
+width:100%;
+}
+
 }
 </style>
 </head>
@@ -128,15 +234,19 @@ background:#eff6ff;
 
 <div class="login-box">
 
-<h1>SB TUGU</h1>
+<div class="logo">SB TUGU</div>
 
-<p>Aplikasi Kasir Modern</p>
+<div class="subtitle">
+Kasir Professional Modern
+</div>
 
 <input type="text" id="username" placeholder="Username">
 
 <input type="password" id="password" placeholder="Password">
 
-<button onclick="login()">LOGIN</button>
+<button class="login-btn" onclick="login()">
+LOGIN
+</button>
 
 </div>
 
@@ -144,53 +254,64 @@ background:#eff6ff;
 
 <div id="app">
 
+<div class="layout">
+
 <div class="sidebar">
-<h2>SB TUGU MENU</h2>
+
+<h2>SB TUGU</h2>
 
 <div class="menu">Dashboard</div>
 <div class="menu">Penjualan</div>
 <div class="menu">Pengeluaran</div>
 <div class="menu">History</div>
 <div class="menu">Laporan</div>
+<div class="menu">Export PDF</div>
+<div class="menu">Export Excel</div>
+<div class="menu logout" onclick="logout()">Logout</div>
 
 </div>
 
-<h2>DASHBOARD SB TUGU</h2>
+<div class="content">
 
-<div id="welcome"></div>
+<div class="topbar">
+
+<div class="saldo-box">
+<small>Saldo Uang Tunai</small>
+<h2 id="saldo">Rp 0</h2>
+</div>
+
+</div>
 
 <div class="cards">
 
 <div class="card">
-<h3>Total Tunai</h3>
+<small>Total Tunai</small>
 <h2 id="totalTunai">Rp 0</h2>
 </div>
 
 <div class="card">
-<h3>Total QRIS</h3>
+<small>Total QRIS</small>
 <h2 id="totalQris">Rp 0</h2>
 </div>
 
 <div class="card">
-<h3>Total Pengeluaran</h3>
+<small>Total Pengeluaran</small>
 <h2 id="totalPengeluaran">Rp 0</h2>
 </div>
 
 <div class="card">
-<h3>Total Tabungan</h3>
+<small>Total Tabungan</small>
 <h2 id="totalTabungan">Rp 0</h2>
 </div>
 
 <div class="card">
-<h3>Total Transaksi</h3>
+<small>Total Transaksi</small>
 <h2 id="totalTransaksi">0</h2>
 </div>
 
 </div>
 
-<div class="section">
-
-<h2>Input Penjualan & Pengeluaran</h2>
+<div class="section" id="inputArea">
 
 <div class="grid">
 
@@ -198,28 +319,28 @@ background:#eff6ff;
 <h3>Penjualan Tunai</h3>
 <input id="tunaiNominal" placeholder="Nominal">
 <input id="tunaiUraian" placeholder="Uraian">
-<button onclick="simpanTunai()">Simpan</button>
+<button class="save-btn" onclick="simpan('Tunai')">Simpan</button>
 </div>
 
 <div class="formbox">
 <h3>Penjualan QRIS</h3>
 <input id="qrisNominal" placeholder="Nominal">
 <input id="qrisUraian" placeholder="Uraian">
-<button onclick="simpanQris()">Simpan</button>
+<button class="save-btn" onclick="simpan('QRIS')">Simpan</button>
 </div>
 
 <div class="formbox">
 <h3>Pengeluaran Umum</h3>
 <input id="pengeluaranNominal" placeholder="Nominal">
 <input id="pengeluaranUraian" placeholder="Uraian">
-<button onclick="simpanPengeluaran()">Simpan</button>
+<button class="save-btn" onclick="simpan('Pengeluaran')">Simpan</button>
 </div>
 
 <div class="formbox">
 <h3>Pengeluaran Tabungan</h3>
 <input id="tabunganNominal" placeholder="Nominal">
 <input id="tabunganUraian" placeholder="Uraian">
-<button onclick="simpanTabungan()">Simpan</button>
+<button class="save-btn" onclick="simpan('Tabungan')">Simpan</button>
 </div>
 
 </div>
@@ -228,17 +349,18 @@ background:#eff6ff;
 
 <div class="section">
 
-<h2>History Transaksi</h2>
-
 <table>
 
 <thead>
+
 <tr>
 <th>Waktu</th>
+<th>Kasir</th>
 <th>Jenis</th>
 <th>Uraian</th>
 <th>Nominal</th>
 </tr>
+
 </thead>
 
 <tbody id="history"></tbody>
@@ -249,9 +371,14 @@ background:#eff6ff;
 
 </div>
 
+</div>
+
+</div>
+
 <script>
 
 let transaksi=[];
+let userLogin='';
 
 function rupiah(n){
 return Number(n).toLocaleString('id-ID');
@@ -263,19 +390,22 @@ let u=document.getElementById('username').value;
 let p=document.getElementById('password').value;
 
 if(
-(u==='owner' ||
-u==='kasir1' ||
-u==='kasir2' ||
-u==='kasir3' ||
+(u==='owner'||
+u==='kasir1'||
+u==='kasir2'||
+u==='kasir3'||
 u==='kasir4')
 && p==='12345'
 ){
 
+userLogin=u;
+
 document.getElementById('loginPage').style.display='none';
 document.getElementById('app').style.display='block';
 
-document.getElementById('welcome').innerHTML=
-'Login sebagai : '+u;
+if(u==='owner'){
+document.getElementById('inputArea').style.display='none';
+}
 
 }else{
 
@@ -285,52 +415,52 @@ alert('Username atau Password salah');
 
 }
 
-function tambahData(jenis,nominal,uraian){
+function logout(){
+location.reload();
+}
+
+function simpan(jenis){
+
+let nominal=0;
+let uraian='';
+
+if(jenis==='Tunai'){
+nominal=tunaiNominal.value;
+uraian=tunaiUraian.value;
+tunaiNominal.value='';
+tunaiUraian.value='';
+}
+
+if(jenis==='QRIS'){
+nominal=qrisNominal.value;
+uraian=qrisUraian.value;
+qrisNominal.value='';
+qrisUraian.value='';
+}
+
+if(jenis==='Pengeluaran'){
+nominal=pengeluaranNominal.value;
+uraian=pengeluaranUraian.value;
+pengeluaranNominal.value='';
+pengeluaranUraian.value='';
+}
+
+if(jenis==='Tabungan'){
+nominal=tabunganNominal.value;
+uraian=tabunganUraian.value;
+tabunganNominal.value='';
+tabunganUraian.value='';
+}
 
 transaksi.push({
 waktu:new Date().toLocaleTimeString('id-ID'),
+kasir:userLogin,
 jenis:jenis,
 uraian:uraian,
 nominal:Number(nominal)
 });
 
 render();
-
-}
-
-function simpanTunai(){
-
-let n=document.getElementById('tunaiNominal').value || 0;
-let u=document.getElementById('tunaiUraian').value;
-
-tambahData('Tunai',n,u);
-
-}
-
-function simpanQris(){
-
-let n=document.getElementById('qrisNominal').value || 0;
-let u=document.getElementById('qrisUraian').value;
-
-tambahData('QRIS',n,u);
-
-}
-
-function simpanPengeluaran(){
-
-let n=document.getElementById('pengeluaranNominal').value || 0;
-let u=document.getElementById('pengeluaranUraian').value;
-
-tambahData('Pengeluaran',n,u);
-
-}
-
-function simpanTabungan(){
-
-let n=document.getElementById('tabunganNominal').value || 0;
-let u=document.getElementById('tabunganUraian').value;
-
-tambahData('Tabungan',n,u);
 
 }
 
@@ -342,16 +472,21 @@ let pengeluaran=0;
 let tabungan=0;
 let isi='';
 
-transaksi.forEach(x=>{
+let data=userLogin==='owner'
+? transaksi
+: transaksi.filter(x=>x.kasir===userLogin);
 
-if(x.jenis==='Tunai') tunai+=x.nominal;
-if(x.jenis==='QRIS') qris+=x.nominal;
-if(x.jenis==='Pengeluaran') pengeluaran+=x.nominal;
-if(x.jenis==='Tabungan') tabungan+=x.nominal;
+data.forEach(x=>{
 
-isi += `
+if(x.jenis==='Tunai')tunai+=x.nominal;
+if(x.jenis==='QRIS')qris+=x.nominal;
+if(x.jenis==='Pengeluaran')pengeluaran+=x.nominal;
+if(x.jenis==='Tabungan')tabungan+=x.nominal;
+
+isi+=`
 <tr>
 <td>${x.waktu}</td>
+<td>${x.kasir}</td>
 <td>${x.jenis}</td>
 <td>${x.uraian}</td>
 <td>Rp ${rupiah(x.nominal)}</td>
@@ -360,11 +495,14 @@ isi += `
 
 });
 
+let saldo=tunai-pengeluaran-tabungan;
+
 document.getElementById('totalTunai').innerHTML='Rp '+rupiah(tunai);
 document.getElementById('totalQris').innerHTML='Rp '+rupiah(qris);
 document.getElementById('totalPengeluaran').innerHTML='Rp '+rupiah(pengeluaran);
 document.getElementById('totalTabungan').innerHTML='Rp '+rupiah(tabungan);
-document.getElementById('totalTransaksi').innerHTML=transaksi.length;
+document.getElementById('totalTransaksi').innerHTML=data.length;
+document.getElementById('saldo').innerHTML='Rp '+rupiah(saldo);
 document.getElementById('history').innerHTML=isi;
 
 }
