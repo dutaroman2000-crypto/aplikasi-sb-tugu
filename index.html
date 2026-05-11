@@ -3,488 +3,160 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SB TUGU BLUE PROFESSIONAL</title>
-
+<title>SB TUGU FINAL REALTIME</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Inter',sans-serif;
-}
-
-body{
-background:#edf4ff;
-color:#1e293b;
-}
-
-.login-page{
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-background:linear-gradient(135deg,#2563eb,#1d4ed8);
-padding:20px;
-}
-
-.login-box{
-background:white;
-width:100%;
-max-width:450px;
-padding:35px;
-border-radius:28px;
-box-shadow:0 20px 50px rgba(0,0,0,0.18);
-}
-
-.logo{
-font-size:34px;
-font-weight:700;
-color:#2563eb;
-margin-bottom:8px;
-}
-
-.subtitle{
-color:#64748b;
-margin-bottom:24px;
-}
-
-.input-group{
-margin-bottom:16px;
-}
-
-.input-group label{
-display:block;
-font-size:14px;
-font-weight:600;
-margin-bottom:8px;
-}
-
-.input-group input{
-width:100%;
-padding:15px;
-border-radius:16px;
-border:1px solid #cbd5e1;
-font-size:15px;
-}
-
-.login-btn{
-width:100%;
-padding:15px;
-border:none;
-border-radius:16px;
-background:#2563eb;
-color:white;
-font-size:16px;
-font-weight:700;
-cursor:pointer;
-margin-top:10px;
-}
-
-#app{
-display:none;
-padding:16px;
-}
-
-.topbar{
-background:white;
-padding:18px 22px;
-border-radius:24px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:16px;
-box-shadow:0 3px 10px rgba(0,0,0,0.05);
-}
-
-.brand{
-font-size:24px;
-font-weight:700;
-color:#2563eb;
-}
-
-.cards{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-gap:14px;
-margin-bottom:16px;
-}
-
-.card{
-background:white;
-padding:18px;
-border-radius:22px;
-box-shadow:0 3px 10px rgba(0,0,0,0.05);
-}
-
-.card-title{
-font-size:13px;
-color:#64748b;
-margin-bottom:8px;
-}
-
-.card-value{
-font-size:24px;
-font-weight:700;
-color:#2563eb;
-}
-
-.section{
-background:white;
-padding:20px;
-border-radius:24px;
-margin-bottom:16px;
-box-shadow:0 3px 10px rgba(0,0,0,0.05);
-}
-
-.section-title{
-font-size:20px;
-font-weight:700;
-margin-bottom:16px;
-color:#1d4ed8;
-}
-
-.form-grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-gap:14px;
-}
-
-.form-card{
-background:#f8fbff;
-border:1px solid #dbeafe;
-padding:18px;
-border-radius:20px;
-}
-
-.form-card h3{
-margin-bottom:12px;
-color:#2563eb;
-font-size:17px;
-}
-
-.form-card input{
-width:100%;
-padding:13px;
-border-radius:14px;
-border:1px solid #cbd5e1;
-margin-bottom:10px;
-font-size:14px;
-}
-
-.save-btn{
-width:100%;
-padding:13px;
-border:none;
-border-radius:14px;
-background:#2563eb;
-color:white;
-font-weight:700;
-cursor:pointer;
-}
-
-.table-wrap{
-overflow:auto;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-}
-
-th,td{
-padding:12px;
-font-size:13px;
-border-bottom:1px solid #e2e8f0;
-text-align:left;
-}
-
-th{
-background:#eff6ff;
-color:#2563eb;
-}
-
-.logout-btn{
-background:#ef4444;
-margin-top:10px;
-}
-
-@media(max-width:700px){
-.topbar{
-flex-direction:column;
-align-items:flex-start;
-gap:10px;
-}
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+body{background:#edf4ff;color:#1e293b}
+.login-page{height:100vh;display:flex;justify-content:center;align-items:center;background:linear-gradient(135deg,#2563eb,#1d4ed8);padding:20px}
+.login-box{background:#fff;width:100%;max-width:450px;padding:35px;border-radius:28px;box-shadow:0 20px 50px rgba(0,0,0,.18)}
+.logo{font-size:34px;font-weight:700;color:#2563eb;margin-bottom:8px}
+.subtitle{color:#64748b;margin-bottom:24px}
+.input-group{margin-bottom:16px}.input-group label{display:block;font-size:14px;font-weight:600;margin-bottom:8px}
+.input-group input{width:100%;padding:15px;border-radius:16px;border:1px solid #cbd5e1;font-size:15px}
+.login-btn,.save-btn,.menu-btn{width:100%;padding:14px;border:none;border-radius:14px;background:#2563eb;color:white;font-weight:700;cursor:pointer}
+#app{display:none}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:240px;background:#1e3a8a;color:white;padding:20px}
+.sidebar h2{margin-bottom:25px}
+.menu-item{padding:14px;border-radius:14px;background:rgba(255,255,255,.1);margin-bottom:10px;cursor:pointer}
+.content{flex:1;padding:18px}
+.topbar{background:white;padding:18px;border-radius:22px;display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;box-shadow:0 3px 10px rgba(0,0,0,.05)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:16px}
+.card{background:white;padding:18px;border-radius:22px;box-shadow:0 3px 10px rgba(0,0,0,.05)}
+.card-title{font-size:13px;color:#64748b;margin-bottom:8px}.card-value{font-size:24px;font-weight:700;color:#2563eb}
+.section{background:white;padding:20px;border-radius:24px;margin-bottom:16px;box-shadow:0 3px 10px rgba(0,0,0,.05)}
+.section-title{font-size:20px;font-weight:700;margin-bottom:16px;color:#1d4ed8}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.form-card{background:#f8fbff;border:1px solid #dbeafe;padding:18px;border-radius:20px}
+.form-card h3{margin-bottom:12px;color:#2563eb;font-size:17px}
+.form-card input{width:100%;padding:13px;border-radius:14px;border:1px solid #cbd5e1;margin-bottom:10px}
+.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:12px;font-size:13px;border-bottom:1px solid #e2e8f0;text-align:left}th{background:#eff6ff;color:#2563eb}
+.action-btn{padding:7px 10px;border:none;border-radius:8px;color:white;font-size:12px;cursor:pointer}.edit-btn{background:#f59e0b}.delete-btn{background:#ef4444}
+.filter-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px}.filter-bar input,.filter-bar select{padding:10px;border:1px solid #ccc;border-radius:10px}
+.hidden{display:none}
+@media(max-width:900px){.layout{flex-direction:column}.sidebar{width:100%}}
 </style>
 </head>
 <body>
-
 <div class="login-page" id="loginPage">
 <div class="login-box">
-
 <div class="logo">SB TUGU</div>
-<div class="subtitle">Aplikasi Kasir Modern Blue Professional</div>
-
-<div class="input-group">
-<label>Username</label>
-<input type="text" id="username" placeholder="Masukkan username" autocomplete="username">
-</div>
-
-<div class="input-group">
-<label>Password</label>
-<input type="password" id="password" placeholder="Masukkan password" autocomplete="current-password">
-</div>
-
+<div class="subtitle">Kasir Realtime Multi Device</div>
+<div class="input-group"><label>Username</label><input type="text" id="username" autocomplete="username"></div>
+<div class="input-group"><label>Password</label><input type="password" id="password" autocomplete="current-password"></div>
 <button class="login-btn" onclick="login()">LOGIN</button>
-
 </div>
 </div>
-
 <div id="app">
-
+<div class="layout">
+<div class="sidebar">
+<h2>SB TUGU</h2>
+<div class="menu-item">Dashboard</div>
+<div class="menu-item">Penjualan</div>
+<div class="menu-item">Pengeluaran</div>
+<div class="menu-item">History</div>
+<div class="menu-item">Laporan</div>
+<div class="menu-item" onclick="exportExcel()">Export Excel</div>
+<div class="menu-item" onclick="exportPDF()">Export PDF</div>
+<div class="menu-item" onclick="logout()">Logout</div>
+</div>
+<div class="content">
 <div class="topbar">
-<div>
-<div class="brand">SB TUGU</div>
-<div id="welcome"></div>
+<div><h2>DASHBOARD SB TUGU</h2><div id="welcome"></div></div>
+<div><div>Saldo Tunai</div><h2 id="saldo">Rp 0</h2></div>
 </div>
-
-<div>
-<div style="color:#64748b;font-size:13px;">Saldo Tunai</div>
-<div id="saldo" style="font-size:28px;font-weight:700;color:#16a34a;">Rp 0</div>
-</div>
-</div>
-
 <div class="cards">
-
-<div class="card">
-<div class="card-title">Total Tunai</div>
-<div class="card-value" id="totalTunai">Rp 0</div>
+<div class="card"><div class="card-title">Total Tunai</div><div class="card-value" id="totalTunai">Rp 0</div></div>
+<div class="card"><div class="card-title">Total QRIS</div><div class="card-value" id="totalQris">Rp 0</div></div>
+<div class="card"><div class="card-title">Pengeluaran</div><div class="card-value" id="totalPengeluaran">Rp 0</div></div>
+<div class="card"><div class="card-title">Tabungan</div><div class="card-value" id="totalTabungan">Rp 0</div></div>
+<div class="card"><div class="card-title">Total Transaksi</div><div class="card-value" id="totalTransaksi">0</div></div>
 </div>
-
-<div class="card">
-<div class="card-title">Total QRIS</div>
-<div class="card-value" id="totalQris">Rp 0</div>
-</div>
-
-<div class="card">
-<div class="card-title">Pengeluaran Umum</div>
-<div class="card-value" id="totalPengeluaran">Rp 0</div>
-</div>
-
-<div class="card">
-<div class="card-title">Pengeluaran Tabungan</div>
-<div class="card-value" id="totalTabungan">Rp 0</div>
-</div>
-
-</div>
-
-<div class="section">
-
+<div class="section" id="kasirArea">
 <div class="section-title">Input Penjualan & Pengeluaran</div>
-
 <div class="form-grid">
-
-<div class="form-card">
-<h3>Penjualan Tunai</h3>
-<input id="tunaiNominal" placeholder="Nominal">
-<input id="tunaiUraian" placeholder="Uraian">
-<button class="save-btn" onclick="simpanTunai()">Simpan</button>
+<div class="form-card"><h3>Penjualan Tunai</h3><input id="tunaiNominal" placeholder="Nominal"><input id="tunaiUraian" placeholder="Uraian"><button class="save-btn" onclick="simpanData('Tunai')">Simpan</button></div>
+<div class="form-card"><h3>Penjualan QRIS</h3><input id="qrisNominal" placeholder="Nominal"><input id="qrisUraian" placeholder="Uraian"><button class="save-btn" onclick="simpanData('QRIS')">Simpan</button></div>
+<div class="form-card"><h3>Pengeluaran Umum</h3><input id="pengeluaranNominal" placeholder="Nominal"><input id="pengeluaranUraian" placeholder="Uraian"><button class="save-btn" onclick="simpanData('Pengeluaran')">Simpan</button></div>
+<div class="form-card"><h3>Pengeluaran Tabungan</h3><input id="tabunganNominal" placeholder="Nominal"><input id="tabunganUraian" placeholder="Uraian"><button class="save-btn" onclick="simpanData('Tabungan')">Simpan</button></div>
 </div>
-
-<div class="form-card">
-<h3>Penjualan QRIS</h3>
-<input id="qrisNominal" placeholder="Nominal">
-<input id="qrisUraian" placeholder="Uraian">
-<button class="save-btn" onclick="simpanQris()">Simpan</button>
 </div>
-
-<div class="form-card">
-<h3>Pengeluaran Umum</h3>
-<input id="pengeluaranNominal" placeholder="Nominal">
-<input id="pengeluaranUraian" placeholder="Uraian">
-<button class="save-btn" onclick="simpanPengeluaran()">Simpan</button>
-</div>
-
-<div class="form-card">
-<h3>Pengeluaran Tabungan</h3>
-<input id="tabunganNominal" placeholder="Nominal">
-<input id="tabunganUraian" placeholder="Uraian">
-<button class="save-btn" onclick="simpanTabungan()">Simpan</button>
-</div>
-
-</div>
-
-</div>
-
 <div class="section">
-
-<div class="section-title">History Transaksi</div>
-
+<div class="section-title">Laporan Transaksi</div>
+<div class="filter-bar">
+<select id="filterKasir"><option value="">Semua Kasir</option><option>kasir1</option><option>kasir2</option><option>kasir3</option><option>kasir4</option></select>
+<input type="date" id="tanggalAwal">
+<input type="date" id="tanggalAkhir">
+<button class="menu-btn" onclick="renderTable()">Filter</button>
+</div>
 <div class="table-wrap">
-
 <table>
-<thead>
-<tr>
-<th>Waktu</th>
-<th>Jenis</th>
-<th>Uraian</th>
-<th>Nominal</th>
-</tr>
-</thead>
-
-<tbody id="history"></tbody>
-
+<thead><tr><th>Waktu</th><th>Kasir</th><th>Jenis</th><th>Uraian</th><th>Nominal</th><th>Aksi</th></tr></thead>
+<tbody id="tbody"></tbody>
 </table>
-
 </div>
-
-<button class="save-btn logout-btn" onclick="logout()">LOGOUT</button>
-
 </div>
-
 </div>
-
-<script>
-
-let transaksi=[];
-
-function rupiah(n){
-return Number(n).toLocaleString('id-ID');
+</div>
+</div>
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getDatabase, ref, push, onValue, remove, update } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
+const firebaseConfig={apiKey:'AIzaSyAy2SdCWzkWfldozz0cBRL_ifP00IFb3vo',authDomain:'sb-tugu-kasir.firebaseapp.com',databaseURL:'https://sb-tugu-kasir-default-rtdb.asia-southeast1.firebasedatabase.app',projectId:'sb-tugu-kasir',storageBucket:'sb-tugu-kasir.firebasestorage.app',messagingSenderId:'953508498389',appId:'1:953508498389:web:81b5720e8420a04cdb8b5c'};
+const app=initializeApp(firebaseConfig);
+const db=getDatabase(app);
+const transaksiRef=ref(db,'transaksi');
+window.userLogin='';
+window.dataGlobal=[];
+window.login=function(){
+let u=username.value;let p=password.value;
+if((u==='owner'||u==='kasir1'||u==='kasir2'||u==='kasir3'||u==='kasir4')&&p==='12345'){
+userLogin=u;loginPage.style.display='none';app.style.display='block';welcome.innerHTML='Login sebagai : '+u;
+if(u==='owner'){kasirArea.classList.add('hidden')}else{kasirArea.classList.remove('hidden')}
+}else{alert('Login salah')}
 }
-
-function login(){
-
-let u=document.getElementById('username').value;
-let p=document.getElementById('password').value;
-
-if(
-(u==='owner' || 
-u==='kasir1' || 
-u==='kasir2' || 
-u==='kasir3' || 
-u==='kasir4')
-&& p==='12345'
-){
-
-document.getElementById('loginPage').style.display='none';
-document.getElementById('app').style.display='block';
-
-document.getElementById('welcome').innerHTML=
-'Login sebagai : '+u;
-
-}else{
-
-alert('Username atau password salah');
-
+window.logout=function(){location.reload()}
+window.rupiah=n=>Number(n||0).toLocaleString('id-ID');
+window.simpanData=function(jenis){
+let nominal=0;let uraian='';
+if(jenis==='Tunai'){nominal=tunaiNominal.value;uraian=tunaiUraian.value;tunaiNominal.value='';tunaiUraian.value=''}
+if(jenis==='QRIS'){nominal=qrisNominal.value;uraian=qrisUraian.value;qrisNominal.value='';qrisUraian.value=''}
+if(jenis==='Pengeluaran'){nominal=pengeluaranNominal.value;uraian=pengeluaranUraian.value;pengeluaranNominal.value='';pengeluaranUraian.value=''}
+if(jenis==='Tabungan'){nominal=tabunganNominal.value;uraian=tabunganUraian.value;tabunganNominal.value='';tabunganUraian.value=''}
+push(transaksiRef,{kasir:userLogin,jenis:jenis,uraian:uraian,nominal:Number(nominal),waktu:new Date().toLocaleString('id-ID'),tanggal:new Date().toISOString().slice(0,10)})
 }
-
-}
-
-function logout(){
-location.reload();
-}
-
-function tambahData(jenis,nominal,uraian){
-
-transaksi.push({
-waktu:new Date().toLocaleTimeString('id-ID'),
-jenis:jenis,
-uraian:uraian,
-nominal:Number(nominal)
-});
-
-render();
-
-}
-
-function simpanTunai(){
-
-let n=document.getElementById('tunaiNominal').value || 0;
-let u=document.getElementById('tunaiUraian').value;
-
-tambahData('Tunai',n,u);
-
-document.getElementById('tunaiNominal').value='';
-document.getElementById('tunaiUraian').value='';
-
-}
-
-function simpanQris(){
-
-let n=document.getElementById('qrisNominal').value || 0;
-let u=document.getElementById('qrisUraian').value;
-
-tambahData('QRIS',n,u);
-
-document.getElementById('qrisNominal').value='';
-document.getElementById('qrisUraian').value='';
-
-}
-
-function simpanPengeluaran(){
-
-let n=document.getElementById('pengeluaranNominal').value || 0;
-let u=document.getElementById('pengeluaranUraian').value;
-
-tambahData('Pengeluaran',n,u);
-
-document.getElementById('pengeluaranNominal').value='';
-document.getElementById('pengeluaranUraian').value='';
-
-}
-
-function simpanTabungan(){
-
-let n=document.getElementById('tabunganNominal').value || 0;
-let u=document.getElementById('tabunganUraian').value;
-
-tambahData('Tabungan',n,u);
-
-document.getElementById('tabunganNominal').value='';
-document.getElementById('tabunganUraian').value='';
-
-}
-
-function render(){
-
-let tunai=0;
-let qris=0;
-let pengeluaran=0;
-let tabungan=0;
-let isi='';
-
-transaksi.forEach(x=>{
-
-if(x.jenis==='Tunai') tunai+=x.nominal;
-if(x.jenis==='QRIS') qris+=x.nominal;
-if(x.jenis==='Pengeluaran') pengeluaran+=x.nominal;
-if(x.jenis==='Tabungan') tabungan+=x.nominal;
-
-isi += `
-<tr>
-<td>${x.waktu}</td>
-<td>${x.jenis}</td>
-<td>${x.uraian}</td>
-<td>Rp ${rupiah(x.nominal)}</td>
-</tr>
-`;
-
-});
-
+onValue(transaksiRef,snap=>{
+let val=snap.val()||{};dataGlobal=[];
+Object.keys(val).forEach(id=>dataGlobal.push({...val[id],id}))
+renderTable();renderDashboard();
+})
+window.renderDashboard=function(){
+let tunai=0,qris=0,pengeluaran=0,tabungan=0;
+let data=userLogin==='owner'?dataGlobal:dataGlobal.filter(x=>x.kasir===userLogin);
+data.forEach(x=>{if(x.jenis==='Tunai')tunai+=x.nominal;if(x.jenis==='QRIS')qris+=x.nominal;if(x.jenis==='Pengeluaran')pengeluaran+=x.nominal;if(x.jenis==='Tabungan')tabungan+=x.nominal})
 let saldo=tunai-pengeluaran-tabungan;
-
-document.getElementById('totalTunai').innerHTML='Rp '+rupiah(tunai);
-document.getElementById('totalQris').innerHTML='Rp '+rupiah(qris);
-document.getElementById('totalPengeluaran').innerHTML='Rp '+rupiah(pengeluaran);
-document.getElementById('totalTabungan').innerHTML='Rp '+rupiah(tabungan);
-document.getElementById('saldo').innerHTML='Rp '+rupiah(saldo);
-document.getElementById('history').innerHTML=isi;
-
+totalTunai.innerHTML='Rp '+rupiah(tunai);totalQris.innerHTML='Rp '+rupiah(qris);totalPengeluaran.innerHTML='Rp '+rupiah(pengeluaran);totalTabungan.innerHTML='Rp '+rupiah(tabungan);totalTransaksi.innerHTML=data.length;saldo.innerHTML='Rp '+rupiah(saldo)
 }
-
+window.renderTable=function(){
+let isi='';
+let fk=filterKasir.value;let ta=tanggalAwal.value;let tb=tanggalAkhir.value;
+let data=userLogin==='owner'?dataGlobal:dataGlobal.filter(x=>x.kasir===userLogin);
+if(fk)data=data.filter(x=>x.kasir===fk);
+if(ta)data=data.filter(x=>x.tanggal>=ta);
+if(tb)data=data.filter(x=>x.tanggal<=tb);
+data.reverse().forEach(x=>{
+isi+=`<tr><td>${x.waktu}</td><td>${x.kasir}</td><td>${x.jenis}</td><td>${x.uraian}</td><td>Rp ${rupiah(x.nominal)}</td><td>${userLogin==='owner'?`<button class='action-btn edit-btn' onclick="editData('${x.id}')">Edit</button> <button class='action-btn delete-btn' onclick="hapusData('${x.id}')">Hapus</button>`:'-'}</td></tr>`
+})
+tbody.innerHTML=isi;
+}
+window.hapusData=function(id){if(confirm('Hapus transaksi?'))remove(ref(db,'transaksi/'+id))}
+window.editData=function(id){let nominal=prompt('Nominal baru');if(nominal)update(ref(db,'transaksi/'+id),{nominal:Number(nominal)})}
+window.exportExcel=function(){
+let ws=XLSX.utils.json_to_sheet(dataGlobal);let wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Laporan');XLSX.writeFile(wb,'laporan_sb_tugu.xlsx')}
+window.exportPDF=function(){const {jsPDF}=window.jspdf;let doc=new jsPDF();doc.text('Laporan SB TUGU',10,10);let y=20;dataGlobal.forEach(x=>{doc.text(`${x.waktu} | ${x.kasir} | ${x.jenis} | ${x.nominal}`,10,y);y+=8});doc.save('laporan_sb_tugu.pdf')}
 </script>
-
 </body>
 </html>
