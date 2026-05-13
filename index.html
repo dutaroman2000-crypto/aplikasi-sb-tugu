@@ -82,6 +82,8 @@ th{background:#eff6ff;color:#2563eb}
 <table>
 <thead>
 <tr>
+<th>Tanggal</th>
+<th>Jam Tutup</th>
 <th>Shift</th>
 <th>Kasir</th>
 <th>Tunai</th>
@@ -140,7 +142,7 @@ th{background:#eff6ff;color:#2563eb}
 <button class="save-btn" onclick="laporanHariIni()" style="width:auto;padding:14px 24px;background:#0f766e;">Hari Ini</button>
 <button class="save-btn" onclick="window.print()" style="width:auto;padding:14px 24px;background:#ea580c;">Cetak Layar</button>
 <button class="save-btn" onclick="downloadPDF()" style="width:auto;padding:14px 24px;background:#16a34a;">Download PDF</button>
-<button class="save-btn" onclick="tutupShift()" style="width:auto;padding:14px 24px;background:#dc2626;">Tutup Shift</button>
+${userLogin!=='owner'?'<button class="save-btn" onclick="tutupShift()" style="width:auto;padding:14px 24px;background:#dc2626;">Tutup Shift</button>':''}
 </div>
 
 <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end;">
@@ -169,7 +171,7 @@ th{background:#eff6ff;color:#2563eb}
 <button class="save-btn" onclick="filterData()" style="width:auto;padding:14px 24px;">Custom Tanggal</button>
 <button class="save-btn" onclick="window.print()" style="width:auto;padding:14px 24px;background:#ea580c;">Cetak Layar</button>
 <button class="save-btn" onclick="downloadPDF()" style="width:auto;padding:14px 24px;background:#16a34a;">Download PDF</button>
-<button class="save-btn" onclick="tutupShift()" style="width:auto;padding:14px 24px;background:#dc2626;">Tutup Shift</button>
+${userLogin!=='owner'?'<button class="save-btn" onclick="tutupShift()" style="width:auto;padding:14px 24px;background:#dc2626;">Tutup Shift</button>':''}
 
 </div>
 
@@ -211,6 +213,7 @@ appId:'1:953508498389:web:81b5720e8420a04cdb8b5c'
 const firebaseApp=initializeApp(firebaseConfig);
 const db=getDatabase(firebaseApp);
 const transaksiRef=ref(db,'transaksi');
+const shiftRef=ref(db,'histori_shift');
 
 let transaksi=[];
 let transaksiFilter=[];
@@ -352,11 +355,11 @@ remove(ref(db,'transaksi/'+id));
 
 window.tutupShift=function(){
 
+if(userLogin==='owner') return;
+
 let shift=getShift();
 
-let data=userLogin==='owner'
-? transaksi
-: transaksi.filter(x=>x.kasir===userLogin);
+let data=transaksi.filter(x=>x.kasir===userLogin);
 
 let tunai=0,qris=0,pengeluaran=0,tabungan=0;
 
@@ -369,19 +372,17 @@ if(x.jenis==='Tabungan')tabungan+=x.nominal;
 
 let saldo=tunai-pengeluaran-tabungan;
 
-let tbody=document.getElementById('shiftHistory');
-
-tbody.innerHTML=`
-<tr>
-<td>${shift}</td>
-<td>${userLogin}</td>
-<td>Rp ${rupiah(tunai)}</td>
-<td>Rp ${rupiah(qris)}</td>
-<td>Rp ${rupiah(pengeluaran)}</td>
-<td>Rp ${rupiah(saldo)}</td>
-<td style="color:green;font-weight:bold">SUDAH TUTUP SHIFT</td>
-</tr>
-`+tbody.innerHTML;
+push(shiftRef,{
+tanggal:new Date().toLocaleDateString('id-ID'),
+jam:new Date().toLocaleTimeString('id-ID'),
+shift,
+kasir:userLogin,
+tunai,
+qris,
+pengeluaran,
+saldo,
+status:'SUDAH TUTUP SHIFT'
+});
 
 alert('Shift berhasil ditutup');
 }
@@ -522,10 +523,12 @@ let html='';
 
 let shift=getShift();
 
+let aktif=transaksi.some(x=>x.kasir===kasir);
+
 html+=`
 <div class="card">
 <h3 style="margin-bottom:10px">${kasir.toUpperCase()}</h3>
-<div><strong>Status :</strong> AKTIF</div>
+<div><strong>Status :</strong> ${aktif?'AKTIF':'BELUM LOGIN'}</div>
 <div><strong>Shift :</strong> ${shift}</div>
 <div><strong>Tutup Shift :</strong> BELUM</div>
 </div>`;
@@ -533,6 +536,35 @@ html+=`
 });
 
 document.getElementById('shiftAktifArea').innerHTML=html;
+
+onValue(shiftRef,(snapshot)=>{
+
+let data=snapshot.val()||{};
+
+let isi='';
+
+Object.keys(data).reverse().forEach(id=>{
+
+let x=data[id];
+
+isi+=`
+<tr>
+<td>${x.tanggal}</td>
+<td>${x.jam}</td>
+<td>${x.shift}</td>
+<td>${x.kasir}</td>
+<td>Rp ${rupiah(x.tunai)}</td>
+<td>Rp ${rupiah(x.qris)}</td>
+<td>Rp ${rupiah(x.pengeluaran)}</td>
+<td>Rp ${rupiah(x.saldo)}</td>
+<td style="font-weight:bold;color:green">${x.status}</td>
+</tr>`;
+
+});
+
+document.getElementById('shiftHistory').innerHTML=isi;
+
+});
 }
 
 function renderDashboardKasir(){
