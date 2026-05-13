@@ -117,11 +117,51 @@ function formatInput(id){document.getElementById(id).addEventListener('input',fu
 ['tunaiNominal','qrisNominal','pengeluaranNominal','tabunganNominal'].forEach(formatInput);
 window.login=function(){let u=document.getElementById('username').value;let p=document.getElementById('password').value;if(['owner','kasir1','kasir2','kasir3','kasir4'].includes(u)&&p==='12345'){userLogin=u;document.getElementById('loginPage').style.display='none';document.getElementById('mainApp').style.display='block';if(u==='owner'){document.getElementById('inputArea').classList.add('hidden');document.getElementById('dashboardKasirArea').classList.remove('hidden');}render();}else{alert('Username atau password salah');}}
 window.logout=function(){
-
 location.reload();
+}
 
-}(jenis){let nominal=0;let uraian='';if(jenis==='Tunai'){nominal=tunaiNominal.value;uraian=tunaiUraian.value;tunaiNominal.value='';tunaiUraian.value='';}if(jenis==='QRIS'){nominal=qrisNominal.value;uraian=qrisUraian.value;qrisNominal.value='';qrisUraian.value='';}if(jenis==='Pengeluaran'){nominal=pengeluaranNominal.value;uraian=pengeluaranUraian.value;pengeluaranNominal.value='';pengeluaranUraian.value='';}if(jenis==='Tabungan'){nominal=tabunganNominal.value;uraian=tabunganUraian.value;tabunganNominal.value='';tabunganUraian.value='';}nominal=Number(String(nominal).replace(/\./g,''));push(transaksiRef,{waktu:new Date().toLocaleString('id-ID'),kasir:userLogin,jenis,uraian,nominal});}
-onValue(transaksiRef,(snapshot)=>{let data=snapshot.val()||{};transaksi=[];Object.keys(data).forEach(id=>{transaksi.push({id,...data[id]});});render();});
+window.simpan=function(jenis){
+let nominal=0;
+let uraian='';
+
+if(jenis==='Tunai'){
+nominal=tunaiNominal.value;
+uraian=tunaiUraian.value;
+tunaiNominal.value='';
+tunaiUraian.value='';
+}
+
+if(jenis==='QRIS'){
+nominal=qrisNominal.value;
+uraian=qrisUraian.value;
+qrisNominal.value='';
+qrisUraian.value='';
+}
+
+if(jenis==='Pengeluaran'){
+nominal=pengeluaranNominal.value;
+uraian=pengeluaranUraian.value;
+pengeluaranNominal.value='';
+pengeluaranUraian.value='';
+}
+
+if(jenis==='Tabungan'){
+nominal=tabunganNominal.value;
+uraian=tabunganUraian.value;
+tabunganNominal.value='';
+tabunganUraian.value='';
+}
+
+nominal=Number(String(nominal).replace(/\./g,''));
+
+push(transaksiRef,{
+waktu:new Date().toLocaleString('id-ID'),
+kasir:userLogin,
+jenis,
+uraian,
+nominal
+});
+}onValue(transaksiRef,(snapshot)=>{let data=snapshot.val()||{};transaksi=[];Object.keys(data).forEach(id=>{transaksi.push({id,...data[id]});});render();});
 window.ubahData=function(id){let trx=transaksi.find(x=>x.id===id);let baru=prompt('Nominal baru',trx.nominal);if(baru){update(ref(db,'transaksi/'+id),{nominal:Number(baru)});}}
 window.hapusData=function(id){remove(ref(db,'transaksi/'+id));}
 function render(){let data=userLogin==='owner'?transaksi:transaksi.filter(x=>x.kasir===userLogin);let tunai=0,qris=0,pengeluaran=0,tabungan=0;let isi='';data.forEach(x=>{if(x.jenis==='Tunai')tunai+=x.nominal;if(x.jenis==='QRIS')qris+=x.nominal;if(x.jenis==='Pengeluaran')pengeluaran+=x.nominal;if(x.jenis==='Tabungan')tabungan+=x.nominal;let aksi='-';
