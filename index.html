@@ -58,7 +58,9 @@ th{background:#eff6ff;color:#2563eb}
 <div style="margin-bottom:15px;font-size:20px;font-weight:700;color:#2563eb" id="infoKasir"></div>
 
 <div class="topbar">
-<button onclick="logout()" style="background:#ef4444;color:white;border:none;padding:12px 18px;border-radius:12px;font-weight:700;margin-right:12px;cursor:pointer;">Logout</button>
+<button id="btnTutupShiftTop" onclick="tutupShift()" style="background:#dc2626;color:white;border:none;padding:12px 18px;border-radius:12px;font-weight:700;margin-right:12px;cursor:pointer;display:none;">Tutup Shift</button>
+
+<button onclick="logout()" style="background:#ef4444;color:white;border:none;padding:12px 18px;border-radius:12px;font-weight:700;cursor:pointer;">Logout</button>
 <div class="saldo-box">
 <small>Saldo Uang Tunai</small>
 <h2 id="saldo">Rp 0</h2>
@@ -142,7 +144,7 @@ th{background:#eff6ff;color:#2563eb}
 <button class="save-btn" onclick="laporanHariIni()" style="width:auto;padding:14px 24px;background:#0f766e;">Hari Ini</button>
 <button class="save-btn" onclick="window.print()" style="width:auto;padding:14px 24px;background:#ea580c;">Cetak Layar</button>
 <button class="save-btn" onclick="downloadPDF()" style="width:auto;padding:14px 24px;background:#16a34a;">Download PDF</button>
-<button id="btnTutupShift" class="save-btn" onclick="tutupShift()" style="width:auto;padding:14px 24px;background:#dc2626;display:none;">Tutup Shift</button>
+${userLogin!=='owner'?'':''}
 </div>
 
 <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end;">
@@ -171,7 +173,7 @@ th{background:#eff6ff;color:#2563eb}
 <button class="save-btn" onclick="filterData()" style="width:auto;padding:14px 24px;">Custom Tanggal</button>
 <button class="save-btn" onclick="window.print()" style="width:auto;padding:14px 24px;background:#ea580c;">Cetak Layar</button>
 <button class="save-btn" onclick="downloadPDF()" style="width:auto;padding:14px 24px;background:#16a34a;">Download PDF</button>
-<button id="btnTutupShift" class="save-btn" onclick="tutupShift()" style="width:auto;padding:14px 24px;background:#dc2626;display:none;">Tutup Shift</button>
+${userLogin!=='owner'?'':''}
 
 </div>
 
@@ -252,9 +254,7 @@ document.getElementById('mainApp').style.display='block';
 document.getElementById('infoKasir').innerHTML='Login : '+u.toUpperCase()+' | '+getShift();
 
 if(u!=='owner'){
-document.querySelectorAll('#btnTutupShift').forEach(btn=>{
-btn.style.display='inline-block';
-});
+document.getElementById('btnTutupShiftTop').style.display='inline-block';
 }
 
 if(u==='owner'){
@@ -387,10 +387,15 @@ tunai,
 qris,
 pengeluaran,
 saldo,
-status:'SUDAH TUTUP SHIFT'
+status:'SUDAH TUTUP SHIFT',
+detailTransaksi:data
 });
 
-alert('Shift berhasil ditutup');
+data.forEach(x=>{
+remove(ref(db,'transaksi/'+x.id));
+});
+
+alert('Shift berhasil ditutup dan transaksi berhasil direset');
 }
 
 function render(){
