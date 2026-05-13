@@ -161,7 +161,10 @@ jenis,
 uraian,
 nominal
 });
-}onValue(transaksiRef,(snapshot)=>{let data=snapshot.val()||{};transaksi=[];Object.keys(data).forEach(id=>{transaksi.push({id,...data[id]});});render();});
+  
+}
+  
+onValue(transaksiRef,(snapshot)=>{let data=snapshot.val()||{};transaksi=[];Object.keys(data).forEach(id=>{transaksi.push({id,...data[id]});});render();});
 window.ubahData=function(id){let trx=transaksi.find(x=>x.id===id);let baru=prompt('Nominal baru',trx.nominal);if(baru){update(ref(db,'transaksi/'+id),{nominal:Number(baru)});}}
 window.hapusData=function(id){remove(ref(db,'transaksi/'+id));}
 function render(){let data=userLogin==='owner'?transaksi:transaksi.filter(x=>x.kasir===userLogin);let tunai=0,qris=0,pengeluaran=0,tabungan=0;let isi='';data.forEach(x=>{if(x.jenis==='Tunai')tunai+=x.nominal;if(x.jenis==='QRIS')qris+=x.nominal;if(x.jenis==='Pengeluaran')pengeluaran+=x.nominal;if(x.jenis==='Tabungan')tabungan+=x.nominal;let aksi='-';
