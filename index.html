@@ -39,6 +39,10 @@ table{width:100%;border-collapse:collapse}th,td{padding:12px;border-bottom:1px s
 </div>
 <div id="mainApp">
 <div class="topbar">
+
+<button onclick="logout()" style="background:#ef4444;color:white;border:none;padding:12px 18px;border-radius:12px;font-weight:700;margin-right:12px;cursor:pointer;">
+Logout
+</button>
 <div class="saldo-box">
 <small>Saldo Uang Tunai</small>
 <h2 id="saldo">Rp 0</h2>
@@ -112,11 +116,43 @@ function rupiah(n){return Number(n||0).toLocaleString('id-ID');}
 function formatInput(id){document.getElementById(id).addEventListener('input',function(){let value=this.value.replace(/[^0-9]/g,'');this.value=value?Number(value).toLocaleString('id-ID'):'';});}
 ['tunaiNominal','qrisNominal','pengeluaranNominal','tabunganNominal'].forEach(formatInput);
 window.login=function(){let u=document.getElementById('username').value;let p=document.getElementById('password').value;if(['owner','kasir1','kasir2','kasir3','kasir4'].includes(u)&&p==='12345'){userLogin=u;document.getElementById('loginPage').style.display='none';document.getElementById('mainApp').style.display='block';if(u==='owner'){document.getElementById('inputArea').classList.add('hidden');document.getElementById('dashboardKasirArea').classList.remove('hidden');}render();}else{alert('Username atau password salah');}}
-window.simpan=function(jenis){let nominal=0;let uraian='';if(jenis==='Tunai'){nominal=tunaiNominal.value;uraian=tunaiUraian.value;tunaiNominal.value='';tunaiUraian.value='';}if(jenis==='QRIS'){nominal=qrisNominal.value;uraian=qrisUraian.value;qrisNominal.value='';qrisUraian.value='';}if(jenis==='Pengeluaran'){nominal=pengeluaranNominal.value;uraian=pengeluaranUraian.value;pengeluaranNominal.value='';pengeluaranUraian.value='';}if(jenis==='Tabungan'){nominal=tabunganNominal.value;uraian=tabunganUraian.value;tabunganNominal.value='';tabunganUraian.value='';}nominal=Number(String(nominal).replace(/\./g,''));push(transaksiRef,{waktu:new Date().toLocaleString('id-ID'),kasir:userLogin,jenis,uraian,nominal});}
+window.logout=function(){
+
+location.reload();
+
+}(jenis){let nominal=0;let uraian='';if(jenis==='Tunai'){nominal=tunaiNominal.value;uraian=tunaiUraian.value;tunaiNominal.value='';tunaiUraian.value='';}if(jenis==='QRIS'){nominal=qrisNominal.value;uraian=qrisUraian.value;qrisNominal.value='';qrisUraian.value='';}if(jenis==='Pengeluaran'){nominal=pengeluaranNominal.value;uraian=pengeluaranUraian.value;pengeluaranNominal.value='';pengeluaranUraian.value='';}if(jenis==='Tabungan'){nominal=tabunganNominal.value;uraian=tabunganUraian.value;tabunganNominal.value='';tabunganUraian.value='';}nominal=Number(String(nominal).replace(/\./g,''));push(transaksiRef,{waktu:new Date().toLocaleString('id-ID'),kasir:userLogin,jenis,uraian,nominal});}
 onValue(transaksiRef,(snapshot)=>{let data=snapshot.val()||{};transaksi=[];Object.keys(data).forEach(id=>{transaksi.push({id,...data[id]});});render();});
 window.ubahData=function(id){let trx=transaksi.find(x=>x.id===id);let baru=prompt('Nominal baru',trx.nominal);if(baru){update(ref(db,'transaksi/'+id),{nominal:Number(baru)});}}
 window.hapusData=function(id){remove(ref(db,'transaksi/'+id));}
-function render(){let data=userLogin==='owner'?transaksi:transaksi.filter(x=>x.kasir===userLogin);let tunai=0,qris=0,pengeluaran=0,tabungan=0;let isi='';data.forEach(x=>{if(x.jenis==='Tunai')tunai+=x.nominal;if(x.jenis==='QRIS')qris+=x.nominal;if(x.jenis==='Pengeluaran')pengeluaran+=x.nominal;if(x.jenis==='Tabungan')tabungan+=x.nominal;let aksi='-';if(userLogin==='owner'){aksi=`<button class="action-btn edit-btn" onclick="ubahData('${x.id}')">Ubah</button> <button class="action-btn delete-btn" onclick="hapusData('${x.id}')">Hapus</button>`;}isi+=`<tr><td>${x.waktu}</td><td>${x.kasir}</td><td>${x.jenis}</td><td>${x.uraian}</td><td>Rp ${rupiah(x.nominal)}</td><td>${aksi}</td></tr>`;});document.getElementById('totalTunai').innerHTML='Rp '+rupiah(tunai);document.getElementById('totalQris').innerHTML='Rp '+rupiah(qris);document.getElementById('totalPengeluaran').innerHTML='Rp '+rupiah(pengeluaran);document.getElementById('totalTabungan').innerHTML='Rp '+rupiah(tabungan);document.getElementById('totalTransaksi').innerHTML=data.length;document.getElementById('saldo').innerHTML='Rp '+rupiah(tunai-pengeluaran-tabungan);document.getElementById('history').innerHTML=isi;renderDashboardKasir();}
+function render(){let data=userLogin==='owner'?transaksi:transaksi.filter(x=>x.kasir===userLogin);let tunai=0,qris=0,pengeluaran=0,tabungan=0;let isi='';data.forEach(x=>{if(x.jenis==='Tunai')tunai+=x.nominal;if(x.jenis==='QRIS')qris+=x.nominal;if(x.jenis==='Pengeluaran')pengeluaran+=x.nominal;if(x.jenis==='Tabungan')tabungan+=x.nominal;let aksi='-';
+
+if(userLogin==='owner'){
+
+aksi=`
+<button class="action-btn edit-btn" onclick="ubahData('${x.id}')">Ubah</button>
+
+<button class="action-btn delete-btn" onclick="hapusData('${x.id}')">Hapus</button>
+`;
+
+}
+
+if(userLogin===x.kasir){
+
+let historyKasir=data.filter(y=>y.kasir===userLogin);
+
+let posisi=historyKasir.findIndex(y=>y.id===x.id);
+
+if(posisi<5){
+
+aksi=`
+<button class="action-btn edit-btn" onclick="ubahData('${x.id}')">Ubah</button>
+
+<button class="action-btn delete-btn" onclick="hapusData('${x.id}')">Hapus</button>
+`;
+
+}
+
+}isi+=`<tr><td>${x.waktu}</td><td>${x.kasir}</td><td>${x.jenis}</td><td>${x.uraian}</td><td>Rp ${rupiah(x.nominal)}</td><td>${aksi}</td></tr>`;});document.getElementById('totalTunai').innerHTML='Rp '+rupiah(tunai);document.getElementById('totalQris').innerHTML='Rp '+rupiah(qris);document.getElementById('totalPengeluaran').innerHTML='Rp '+rupiah(pengeluaran);document.getElementById('totalTabungan').innerHTML='Rp '+rupiah(tabungan);document.getElementById('totalTransaksi').innerHTML=data.length;document.getElementById('saldo').innerHTML='Rp '+rupiah(tunai-pengeluaran-tabungan);document.getElementById('history').innerHTML=isi;renderDashboardKasir();}
 function renderDashboardKasir(){if(userLogin!=='owner')return;let html='';['kasir1','kasir2','kasir3','kasir4'].forEach(kasir=>{let dataKasir=transaksi.filter(x=>x.kasir===kasir);let total=dataKasir.reduce((a,b)=>a+b.nominal,0);html+=`<div class="card"><small>${kasir.toUpperCase()}</small><h2>Rp ${rupiah(total)}</h2><div>${dataKasir.length} transaksi</div></div>`;});document.getElementById('dashboardKasir').innerHTML=html;}
 </script>
 </body>
