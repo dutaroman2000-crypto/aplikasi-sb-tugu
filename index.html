@@ -1,15 +1,4 @@
 <!DOCTYPE html>
-if(jenis==='Pengeluaran'){
-nominal=document.getElementById('pengeluaranNominal').value;
-uraian=document.getElementById('pengeluaranUraian').value;
-}
-
-if(jenis==='Tabungan'){
-nominal=document.getElementById('tabunganNominal').value;
-uraian=document.getElementById('tabunganUraian').value;
-}
-nominal=Number(String(nominal).replace(/\./g,''));
-transaksi.push({
 id:Date.now(),
 waktu:new Date().toLocaleString('id-ID'),
 kasir:userLogin,
