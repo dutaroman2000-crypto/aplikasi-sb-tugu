@@ -135,10 +135,13 @@ th{background:#eff6ff;color:#2563eb}
 </select>
 </div>
 
-<button class="save-btn" onclick="filterData()" style="width:auto;padding:14px 24px;">Tampilkan</button>
+<button class="save-btn" onclick="laporanHariIni()" style="width:auto;padding:14px 24px;background:#0f766e;">Laporan Hari Ini</button>
+<button class="save-btn" onclick="filterData()" style="width:auto;padding:14px 24px;">Laporan Custom</button>
 <button class="save-btn" onclick="downloadPDF()" style="width:auto;padding:14px 24px;background:#16a34a;">Download PDF</button>
 
 </div>
+
+<div id="laporanArea" style="overflow:auto;margin-bottom:20px;"></div>
 
 <table>
 <thead>
@@ -274,6 +277,21 @@ window.filterData=function(){
 render();
 }
 
+window.laporanHariIni=function(){
+
+let hariIni=new Date();
+let yyyy=hariIni.getFullYear();
+let mm=String(hariIni.getMonth()+1).padStart(2,'0');
+let dd=String(hariIni.getDate()).padStart(2,'0');
+
+let tgl=yyyy+'-'+mm+'-'+dd;
+
+document.getElementById('tglAwal').value=tgl;
+document.getElementById('tglAkhir').value=tgl;
+
+render();
+}
+
 window.ubahData=function(id){
 let trx=transaksi.find(x=>x.id===id);
 let baru=prompt('Nominal baru',trx.nominal);
@@ -369,6 +387,44 @@ document.getElementById('totalTabungan').innerHTML='Rp '+rupiah(tabungan);
 document.getElementById('totalTransaksi').innerHTML=data.length;
 document.getElementById('saldo').innerHTML='Rp '+rupiah(tunai-pengeluaran-tabungan);
 document.getElementById('history').innerHTML=isi;
+
+let laporanHTML=`
+<div class="cards">
+<div class="card"><small>Total Tunai</small><h2>Rp ${rupiah(tunai)}</h2></div>
+<div class="card"><small>Total QRIS</small><h2>Rp ${rupiah(qris)}</h2></div>
+<div class="card"><small>Total Pengeluaran</small><h2>Rp ${rupiah(pengeluaran)}</h2></div>
+<div class="card"><small>Total Tabungan</small><h2>Rp ${rupiah(tabungan)}</h2></div>
+<div class="card"><small>Saldo Akhir</small><h2>Rp ${rupiah(tunai-pengeluaran-tabungan)}</h2></div>
+</div>
+`;
+
+if(userLogin==='owner'){
+
+let laporanKasir='';
+
+['kasir1','kasir2','kasir3','kasir4'].forEach(kasir=>{
+
+let dataKasir=data.filter(x=>x.kasir===kasir);
+
+let totalKasir=dataKasir.reduce((a,b)=>a+b.nominal,0);
+
+laporanKasir+=`
+<div class="card">
+<small>${kasir.toUpperCase()}</small>
+<h2>Rp ${rupiah(totalKasir)}</h2>
+<div>${dataKasir.length} transaksi</div>
+</div>
+`;
+
+});
+
+laporanHTML+=`
+<h3 style="margin:15px 0">Laporan Per Kasir</h3>
+<div class="cards">${laporanKasir}</div>
+`;
+}
+
+document.getElementById('laporanArea').innerHTML=laporanHTML;
 
 renderDashboardKasir();
 }
