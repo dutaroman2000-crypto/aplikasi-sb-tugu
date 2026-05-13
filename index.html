@@ -142,7 +142,7 @@ th{background:#eff6ff;color:#2563eb}
 <button class="save-btn" onclick="laporanHariIni()" style="width:auto;padding:14px 24px;background:#0f766e;">Hari Ini</button>
 <button class="save-btn" onclick="window.print()" style="width:auto;padding:14px 24px;background:#ea580c;">Cetak Layar</button>
 <button class="save-btn" onclick="downloadPDF()" style="width:auto;padding:14px 24px;background:#16a34a;">Download PDF</button>
-${userLogin!=='owner'?'<button class="save-btn" onclick="tutupShift()" style="width:auto;padding:14px 24px;background:#dc2626;">Tutup Shift</button>':''}
+${userLogin!=='owner'?'<button id="btnTutupShift" class="save-btn" onclick="tutupShift()" style="width:auto;padding:14px 24px;background:#dc2626;display:none;">Tutup Shift</button>':''}
 </div>
 
 <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end;">
@@ -171,7 +171,7 @@ ${userLogin!=='owner'?'<button class="save-btn" onclick="tutupShift()" style="wi
 <button class="save-btn" onclick="filterData()" style="width:auto;padding:14px 24px;">Custom Tanggal</button>
 <button class="save-btn" onclick="window.print()" style="width:auto;padding:14px 24px;background:#ea580c;">Cetak Layar</button>
 <button class="save-btn" onclick="downloadPDF()" style="width:auto;padding:14px 24px;background:#16a34a;">Download PDF</button>
-${userLogin!=='owner'?'<button class="save-btn" onclick="tutupShift()" style="width:auto;padding:14px 24px;background:#dc2626;">Tutup Shift</button>':''}
+${userLogin!=='owner'?'<button id="btnTutupShift" class="save-btn" onclick="tutupShift()" style="width:auto;padding:14px 24px;background:#dc2626;display:none;">Tutup Shift</button>':''}
 
 </div>
 
@@ -250,6 +250,12 @@ document.getElementById('loginPage').style.display='none';
 document.getElementById('mainApp').style.display='block';
 
 document.getElementById('infoKasir').innerHTML='Login : '+u.toUpperCase()+' | '+getShift();
+
+if(u!=='owner'){
+document.querySelectorAll('#btnTutupShift').forEach(btn=>{
+btn.style.display='inline-block';
+});
+}
 
 if(u==='owner'){
 document.getElementById('inputArea').classList.add('hidden');
@@ -528,9 +534,7 @@ let aktif=transaksi.some(x=>x.kasir===kasir);
 html+=`
 <div class="card">
 <h3 style="margin-bottom:10px">${kasir.toUpperCase()}</h3>
-<div><strong>Status :</strong> ${aktif?'AKTIF':'BELUM LOGIN'}</div>
-<div><strong>Shift :</strong> ${shift}</div>
-<div><strong>Tutup Shift :</strong> BELUM</div>
+<div><strong>Status :</strong> ${aktif?'AKTIF':'TIDAK AKTIF'}</div>
 </div>`;
 
 });
