@@ -380,7 +380,7 @@ let baru=prompt('Nominal baru',trx.nominal);
 
 if(baru){
 
-push(ref(db,'log_aktivitas'),{
+push(logRef,{
 kasir:userLogin,
 aktivitas:'UBAH',
 nominalLama:trx.nominal,
@@ -394,11 +394,13 @@ update(ref(db,'transaksi/'+id),{nominal:Number(baru)});
 
 }
 
+}
+
 window.hapusData=function(id){
 
 let trx=transaksi.find(x=>x.id===id);
 
-push(ref(db,'log_aktivitas'),{
+push(logRef,{
 kasir:userLogin,
 aktivitas:'HAPUS',
 nominalLama:trx.nominal,
@@ -407,6 +409,7 @@ waktu:new Date().toLocaleString('id-ID')
 });
 
 remove(ref(db,'transaksi/'+id));
+
 }
 
 window.downloadShiftPDF=function(id){
@@ -588,133 +591,7 @@ document.getElementById('totalTransaksi').innerHTML=data.length;
 document.getElementById('saldo').innerHTML='Rp '+rupiah(tunai-pengeluaran-tabungan);
 document.getElementById('history').innerHTML=isi;
 
-let laporanTunai=data.filter(x=>x.jenis==='Tunai').sort((a,b)=>a.waktu-b.waktu);
-let laporanQris=data.filter(x=>x.jenis==='QRIS').sort((a,b)=>a.waktu-b.waktu);
-let laporanPengeluaran=data.filter(x=>x.jenis==='Pengeluaran').sort((a,b)=>a.waktu-b.waktu);
-let laporanTabungan=data.filter(x=>x.jenis==='Tabungan').sort((a,b)=>a.waktu-b.waktu);
-
-let htmlTunai='';
-let htmlQris='';
-let htmlPengeluaran='';
-let htmlTabungan='';
-
-laporanTunai.forEach(x=>{
-htmlTunai+=`<tr>
-<td>${new Date(Number(x.waktu)).toLocaleString('id-ID')}</td>
-<td>${x.uraian}</td>
-<td>Rp ${rupiah(x.nominal)}</td>
-</tr>`;
-});
-
-laporanQris.forEach(x=>{
-htmlQris+=`<tr>
-<td>${new Date(Number(x.waktu)).toLocaleString('id-ID')}</td>
-<td>${x.uraian}</td>
-<td>Rp ${rupiah(x.nominal)}</td>
-</tr>`;
-});
-
-laporanPengeluaran.forEach(x=>{
-htmlPengeluaran+=`<tr>
-<td>${new Date(Number(x.waktu)).toLocaleString('id-ID')}</td>
-<td>${x.uraian}</td>
-<td>- Rp ${rupiah(x.nominal)}</td>
-</tr>`;
-});
-
-laporanTabungan.forEach(x=>{
-htmlTabungan+=`<tr>
-<td>${new Date(Number(x.waktu)).toLocaleString('id-ID')}</td>
-<td>${x.uraian}</td>
-<td>- Rp ${rupiah(x.nominal)}</td>
-</tr>`;
-});
-
-let laporanHTML=`
-<div class="section">
-<h2 style="margin-bottom:15px">Laporan Penjualan Tunai</h2>
-<table>
-<thead>
-<tr>
-<th>Waktu</th>
-<th>Uraian</th>
-<th>Nominal</th>
-</tr>
-</thead>
-<tbody>${htmlTunai}</tbody>
-</table>
-</div>
-
-<div class="section">
-<h2 style="margin-bottom:15px">Laporan Penjualan QRIS</h2>
-<table>
-<thead>
-<tr>
-<th>Waktu</th>
-<th>Uraian</th>
-<th>Nominal</th>
-</tr>
-</thead>
-<tbody>${htmlQris}</tbody>
-</table>
-</div>
-
-<div class="section">
-<h2 style="margin-bottom:15px">Pengeluaran Umum</h2>
-<table>
-<thead>
-<tr>
-<th>Waktu</th>
-<th>Uraian</th>
-<th>Nominal</th>
-</tr>
-</thead>
-<tbody>${htmlPengeluaran}</tbody>
-</table>
-</div>
-
-<div class="section">
-<h2 style="margin-bottom:15px">Tabungan</h2>
-<table>
-<thead>
-<tr>
-<th>Waktu</th>
-<th>Uraian</th>
-<th>Nominal</th>
-</tr>
-</thead>
-<tbody>${htmlTabungan}</tbody>
-</table>
-</div>
-
-<div class="section">
-<h2>Saldo Uang Tunai : Rp ${rupiah(tunai-pengeluaran-tabungan)}</h2>
-</div>
-`;
-
-if(userLogin==='owner'){
-
-let laporanKasir='';
-
-['kasir1','kasir2','kasir3','kasir4'].forEach(kasir=>{
-
-let dataKasir=data.filter(x=>x.kasir===kasir);
-
-let totalKasir=dataKasir.reduce((a,b)=>a+b.nominal,0);
-
-laporanKasir+=`
-<div class="card">
-<small>${kasir.toUpperCase()}</small>
-<h2>Rp ${rupiah(totalKasir)}</h2>
-<div>${dataKasir.length} transaksi</div>
-</div>`;
-
-});
-
-laporanHTML+=`<div class="section"><h3 style="margin-bottom:15px">Rekap Per Kasir</h3><div class="cards">${laporanKasir}</div></div>`;
-}
-
-document.getElementById('laporanArea').innerHTML=laporanHTML;
+document.getElementById('laporanArea').innerHTML='';
 
 renderDashboardKasir();
 renderShiftAktif();
