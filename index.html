@@ -251,7 +251,7 @@ tabunganUraian.value='';
 nominal=Number(String(nominal).replace(/\./g,''));
 
 push(transaksiRef,{
-waktu:new Date().toISOString(),
+waktu:Date.now(),
 kasir:userLogin,
 jenis,
 uraian,
@@ -337,8 +337,22 @@ aksi=`
 `;
 }
 
+if(userLogin===x.kasir){
+
+let historyKasir=data.filter(y=>y.kasir===userLogin);
+
+let posisi=historyKasir.findIndex(y=>y.id===x.id);
+
+if(posisi<5){
+aksi=`
+<button class="action-btn edit-btn" onclick="ubahData('${x.id}')">Ubah</button>
+<button class="action-btn delete-btn" onclick="hapusData('${x.id}')">Hapus</button>
+`;
+}
+}
+
 isi+=`<tr>
-<td>${new Date(x.waktu).toLocaleString('id-ID')}</td>
+<td>${new Date(Number(x.waktu)).toLocaleString('id-ID')}</td>
 <td>${x.kasir}</td>
 <td>${x.jenis}</td>
 <td>${x.uraian}</td>
@@ -399,7 +413,7 @@ if(x.jenis==='Tabungan') totalTabungan+=x.nominal;
 
 rows.push([
 index+1,
-new Date(x.waktu).toLocaleString('id-ID'),
+new Date(Number(x.waktu)).toLocaleString('id-ID'),
 x.kasir,
 x.jenis,
 x.uraian,
