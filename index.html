@@ -445,14 +445,30 @@ if(userLogin!=='owner')return;
 let html='';
 
 ['kasir1','kasir2','kasir3','kasir4'].forEach(kasir=>{
-let dataKasir=transaksi.filter(x=>x.kasir===kasir);
-let total=dataKasir.reduce((a,b)=>a+b.nominal,0);
 
-html+=`<div class="card">
-<small>${kasir.toUpperCase()}</small>
-<h2>Rp ${rupiah(total)}</h2>
-<div>${dataKasir.length} transaksi</div>
+let dataKasir=transaksi.filter(x=>x.kasir===kasir);
+
+let totalTunaiKasir=0;
+let totalQrisKasir=0;
+let totalPengeluaranKasir=0;
+let totalTabunganKasir=0;
+
+dataKasir.forEach(x=>{
+if(x.jenis==='Tunai') totalTunaiKasir+=x.nominal;
+if(x.jenis==='QRIS') totalQrisKasir+=x.nominal;
+if(x.jenis==='Pengeluaran') totalPengeluaranKasir+=x.nominal;
+if(x.jenis==='Tabungan') totalTabunganKasir+=x.nominal;
+});
+
+html+=`
+<div class="card">
+<h2 style="margin-bottom:14px">${kasir.toUpperCase()}</h2>
+<div style="margin-bottom:8px"><strong>Total Tunai :</strong> Rp ${rupiah(totalTunaiKasir)}</div>
+<div style="margin-bottom:8px"><strong>Total QRIS :</strong> Rp ${rupiah(totalQrisKasir)}</div>
+<div style="margin-bottom:8px"><strong>Pengeluaran Umum :</strong> Rp ${rupiah(totalPengeluaranKasir)}</div>
+<div><strong>Pengeluaran Tabungan :</strong> Rp ${rupiah(totalTabunganKasir)}</div>
 </div>`;
+
 });
 
 
