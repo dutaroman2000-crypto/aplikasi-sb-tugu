@@ -93,6 +93,7 @@ th{background:#eff6ff;color:#2563eb}
 <th>Pengeluaran</th>
 <th>Saldo</th>
 <th>Status</th>
+<th>Detail</th>
 </tr>
 </thead>
 <tbody id="shiftHistory"></tbody>
@@ -363,6 +364,57 @@ window.hapusData=function(id){
 remove(ref(db,'transaksi/'+id));
 }
 
+window.lihatShift=function(id){
+
+onValue(ref(db,'histori_shift/'+id),(snapshot)=>{
+
+let x=snapshot.val();
+
+if(!x) return;
+
+let detail='';
+
+(x.detailTransaksi||[]).forEach(trx=>{
+
+detail+=`
+<tr>
+<td>${new Date(Number(trx.waktu)).toLocaleString('id-ID')}</td>
+<td>${trx.jenis}</td>
+<td>${trx.uraian}</td>
+<td>Rp ${rupiah(trx.nominal)}</td>
+</tr>`;
+
+});
+
+let html=`
+<div class="section">
+<h2 style="margin-bottom:15px">Detail Histori Shift</h2>
+<div style="margin-bottom:10px"><strong>Tanggal:</strong> ${x.tanggal}</div>
+<div style="margin-bottom:10px"><strong>Jam Tutup:</strong> ${x.jam}</div>
+<div style="margin-bottom:10px"><strong>Kasir:</strong> ${x.kasir}</div>
+<div style="margin-bottom:10px"><strong>Shift:</strong> ${x.shift}</div>
+
+<table>
+<thead>
+<tr>
+<th>Waktu</th>
+<th>Jenis</th>
+<th>Uraian</th>
+<th>Nominal</th>
+</tr>
+</thead>
+<tbody>
+${detail}
+</tbody>
+</table>
+</div>`;
+
+let area=document.getElementById('laporanArea');
+area.innerHTML=html;
+
+});
+}
+
 window.tutupShift=function(){
 
 if(userLogin==='owner') return;
@@ -571,6 +623,9 @@ isi+=`
 <td>Rp ${rupiah(x.pengeluaran)}</td>
 <td>Rp ${rupiah(x.saldo)}</td>
 <td style="font-weight:bold;color:green">${x.status}</td>
+<td>
+<button class="action-btn edit-btn" onclick="lihatShift('${id}')">Lihat</button>
+</td>
 </tr>`;
 
 });
