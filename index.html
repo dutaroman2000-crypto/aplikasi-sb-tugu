@@ -144,7 +144,7 @@ th{background:#eff6ff;color:#2563eb}
 
 <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end;">
 <button class="save-btn" onclick="laporanHariIni()" style="width:auto;padding:14px 24px;background:#0f766e;">Hari Ini</button>
-<button class="save-btn" onclick="window.print()" style="width:auto;padding:14px 24px;background:#ea580c;">Cetak Layar</button>
+<button class="save-btn" onclick="cetakLaporan()" style="width:auto;padding:14px 24px;background:#ea580c;">Cetak Layar</button>
 <button class="save-btn" onclick="downloadPDF()" style="width:auto;padding:14px 24px;background:#16a34a;">Download PDF</button>
 
 </div>
@@ -173,7 +173,7 @@ th{background:#eff6ff;color:#2563eb}
 </div>
 
 <button class="save-btn" onclick="filterData()" style="width:auto;padding:14px 24px;">Custom Tanggal</button>
-<button class="save-btn" onclick="window.print()" style="width:auto;padding:14px 24px;background:#ea580c;">Cetak Layar</button>
+<button class="save-btn" onclick="cetakLaporan()" style="width:auto;padding:14px 24px;background:#ea580c;">Cetak Layar</button>
 <button class="save-btn" onclick="downloadPDF()" style="width:auto;padding:14px 24px;background:#16a34a;">Download PDF</button>
 
 
@@ -354,14 +354,39 @@ render();
 }
 
 window.ubahData=function(id){
+
 let trx=transaksi.find(x=>x.id===id);
+
 let baru=prompt('Nominal baru',trx.nominal);
+
 if(baru){
+
+push(ref(db,'log_aktivitas'),{
+kasir:userLogin,
+aktivitas:'UBAH',
+nominalLama:trx.nominal,
+nominalBaru:Number(baru),
+waktu:new Date().toLocaleString('id-ID')
+});
+
 update(ref(db,'transaksi/'+id),{nominal:Number(baru)});
+
 }
+
 }
 
 window.hapusData=function(id){
+
+let trx=transaksi.find(x=>x.id===id);
+
+push(ref(db,'log_aktivitas'),{
+kasir:userLogin,
+aktivitas:'HAPUS',
+nominalLama:trx.nominal,
+nominalBaru:0,
+waktu:new Date().toLocaleString('id-ID')
+});
+
 remove(ref(db,'transaksi/'+id));
 }
 
@@ -544,13 +569,107 @@ document.getElementById('totalTransaksi').innerHTML=data.length;
 document.getElementById('saldo').innerHTML='Rp '+rupiah(tunai-pengeluaran-tabungan);
 document.getElementById('history').innerHTML=isi;
 
+let laporanTunai=data.filter(x=>x.jenis==='Tunai').sort((a,b)=>a.waktu-b.waktu);
+let laporanQris=data.filter(x=>x.jenis==='QRIS').sort((a,b)=>a.waktu-b.waktu);
+let laporanPengeluaran=data.filter(x=>x.jenis==='Pengeluaran').sort((a,b)=>a.waktu-b.waktu);
+let laporanTabungan=data.filter(x=>x.jenis==='Tabungan').sort((a,b)=>a.waktu-b.waktu);
+
+let htmlTunai='';
+let htmlQris='';
+let htmlPengeluaran='';
+let htmlTabungan='';
+
+laporanTunai.forEach(x=>{
+htmlTunai+=`<tr>
+<td>${new Date(Number(x.waktu)).toLocaleString('id-ID')}</td>
+<td>${x.uraian}</td>
+<td>Rp ${rupiah(x.nominal)}</td>
+</tr>`;
+});
+
+laporanQris.forEach(x=>{
+htmlQris+=`<tr>
+<td>${new Date(Number(x.waktu)).toLocaleString('id-ID')}</td>
+<td>${x.uraian}</td>
+<td>Rp ${rupiah(x.nominal)}</td>
+</tr>`;
+});
+
+laporanPengeluaran.forEach(x=>{
+htmlPengeluaran+=`<tr>
+<td>${new Date(Number(x.waktu)).toLocaleString('id-ID')}</td>
+<td>${x.uraian}</td>
+<td>- Rp ${rupiah(x.nominal)}</td>
+</tr>`;
+});
+
+laporanTabungan.forEach(x=>{
+htmlTabungan+=`<tr>
+<td>${new Date(Number(x.waktu)).toLocaleString('id-ID')}</td>
+<td>${x.uraian}</td>
+<td>- Rp ${rupiah(x.nominal)}</td>
+</tr>`;
+});
+
 let laporanHTML=`
-<div class="cards">
-<div class="card"><small>Total Tunai</small><h2>Rp ${rupiah(tunai)}</h2></div>
-<div class="card"><small>Total QRIS</small><h2>Rp ${rupiah(qris)}</h2></div>
-<div class="card"><small>Total Pengeluaran</small><h2>Rp ${rupiah(pengeluaran)}</h2></div>
-<div class="card"><small>Total Tabungan</small><h2>Rp ${rupiah(tabungan)}</h2></div>
-<div class="card"><small>Saldo Akhir</small><h2>Rp ${rupiah(tunai-pengeluaran-tabungan)}</h2></div>
+<div class="section">
+<h2 style="margin-bottom:15px">Laporan Penjualan Tunai</h2>
+<table>
+<thead>
+<tr>
+<th>Waktu</th>
+<th>Uraian</th>
+<th>Nominal</th>
+</tr>
+</thead>
+<tbody>${htmlTunai}</tbody>
+</table>
+</div>
+
+<div class="section">
+<h2 style="margin-bottom:15px">Laporan Penjualan QRIS</h2>
+<table>
+<thead>
+<tr>
+<th>Waktu</th>
+<th>Uraian</th>
+<th>Nominal</th>
+</tr>
+</thead>
+<tbody>${htmlQris}</tbody>
+</table>
+</div>
+
+<div class="section">
+<h2 style="margin-bottom:15px">Pengeluaran Umum</h2>
+<table>
+<thead>
+<tr>
+<th>Waktu</th>
+<th>Uraian</th>
+<th>Nominal</th>
+</tr>
+</thead>
+<tbody>${htmlPengeluaran}</tbody>
+</table>
+</div>
+
+<div class="section">
+<h2 style="margin-bottom:15px">Tabungan</h2>
+<table>
+<thead>
+<tr>
+<th>Waktu</th>
+<th>Uraian</th>
+<th>Nominal</th>
+</tr>
+</thead>
+<tbody>${htmlTabungan}</tbody>
+</table>
+</div>
+
+<div class="section">
+<h2>Saldo Uang Tunai : Rp ${rupiah(tunai-pengeluaran-tabungan)}</h2>
 </div>
 `;
 
@@ -569,15 +688,11 @@ laporanKasir+=`
 <small>${kasir.toUpperCase()}</small>
 <h2>Rp ${rupiah(totalKasir)}</h2>
 <div>${dataKasir.length} transaksi</div>
-</div>
-`;
+</div>`;
 
 });
 
-laporanHTML+=`
-<h3 style="margin:15px 0">Laporan Per Kasir</h3>
-<div class="cards">${laporanKasir}</div>
-`;
+laporanHTML+=`<div class="section"><h3 style="margin-bottom:15px">Rekap Per Kasir</h3><div class="cards">${laporanKasir}</div></div>`;
 }
 
 document.getElementById('laporanArea').innerHTML=laporanHTML;
@@ -675,6 +790,32 @@ html+=`
 
 
 document.getElementById('dashboardKasir').innerHTML=html;
+}
+
+window.cetakLaporan=function(){
+
+let area=document.getElementById('laporanArea').innerHTML;
+
+let win=window.open('','','width=1000,height=700');
+
+win.document.write(`
+<html>
+<head>
+<title>Laporan SB TUGU</title>
+<style>
+body{font-family:Arial;padding:20px}
+table{width:100%;border-collapse:collapse;margin-bottom:20px}
+th,td{border:1px solid #ccc;padding:8px;text-align:left}
+th{background:#eee}
+</style>
+</head>
+<body>
+${area}
+</body>
+</html>
+`);
+
+win.document.close();
 }
 
 window.downloadPDF=function(){
