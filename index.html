@@ -112,7 +112,15 @@ th{background:#eff6ff;color:#2563eb}
 
 <div class="section">
 
-<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;align-items:end;">
+<div style="margin-bottom:20px;display:flex;flex-direction:column;gap:12px;">
+
+<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end;">
+<button class="save-btn" onclick="laporanHariIni()" style="width:auto;padding:14px 24px;background:#0f766e;">Hari Ini</button>
+<button class="save-btn" onclick="window.print()" style="width:auto;padding:14px 24px;background:#ea580c;">Cetak Layar</button>
+<button class="save-btn" onclick="downloadPDF()" style="width:auto;padding:14px 24px;background:#16a34a;">Download PDF</button>
+</div>
+
+<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end;">
 
 <div>
 <label>Tanggal Awal</label>
@@ -135,9 +143,11 @@ th{background:#eff6ff;color:#2563eb}
 </select>
 </div>
 
-<button class="save-btn" onclick="laporanHariIni()" style="width:auto;padding:14px 24px;background:#0f766e;">Laporan Hari Ini</button>
-<button class="save-btn" onclick="filterData()" style="width:auto;padding:14px 24px;">Laporan Custom</button>
+<button class="save-btn" onclick="filterData()" style="width:auto;padding:14px 24px;">Custom Tanggal</button>
+<button class="save-btn" onclick="window.print()" style="width:auto;padding:14px 24px;background:#ea580c;">Cetak Layar</button>
 <button class="save-btn" onclick="downloadPDF()" style="width:auto;padding:14px 24px;background:#16a34a;">Download PDF</button>
+
+</div>
 
 </div>
 
