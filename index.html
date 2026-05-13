@@ -80,6 +80,7 @@ th{background:#eff6ff;color:#2563eb}
 <div id="shiftAktifArea" class="cards" style="margin-bottom:20px"></div>
 
 <h2 style="margin-bottom:14px">Histori & Laporan Shift</h2>
+<div id="historiKasirArea" style="margin-bottom:15px"></div>
 <div style="overflow:auto;margin-bottom:20px;">
 <table>
 <thead>
@@ -93,7 +94,7 @@ th{background:#eff6ff;color:#2563eb}
 <th>Pengeluaran</th>
 <th>Saldo</th>
 <th>Status</th>
-<th>Detail</th>
+<th>Download</th>
 </tr>
 </thead>
 <tbody id="shiftHistory"></tbody>
@@ -364,7 +365,7 @@ window.hapusData=function(id){
 remove(ref(db,'transaksi/'+id));
 }
 
-window.lihatShift=function(id){
+window.downloadShiftPDF=function(id){
 
 onValue(ref(db,'histori_shift/'+id),(snapshot)=>{
 
@@ -372,47 +373,52 @@ let x=snapshot.val();
 
 if(!x) return;
 
-let detail='';
+const { jsPDF } = window.jspdf;
+const doc = new jsPDF();
 
-(x.detailTransaksi||[]).forEach(trx=>{
+let rows=[];
 
-detail+=`
-<tr>
-<td>${new Date(Number(trx.waktu)).toLocaleString('id-ID')}</td>
-<td>${trx.jenis}</td>
-<td>${trx.uraian}</td>
-<td>Rp ${rupiah(trx.nominal)}</td>
-</tr>`;
-
+(x.detailTransaksi||[]).forEach((trx,index)=>{
+rows.push([
+index+1,
+new Date(Number(trx.waktu)).toLocaleString('id-ID'),
+trx.jenis,
+trx.uraian,
+'Rp '+rupiah(trx.nominal)
+]);
 });
 
-let html=`
-<div class="section">
-<h2 style="margin-bottom:15px">Detail Histori Shift</h2>
-<div style="margin-bottom:10px"><strong>Tanggal:</strong> ${x.tanggal}</div>
-<div style="margin-bottom:10px"><strong>Jam Tutup:</strong> ${x.jam}</div>
-<div style="margin-bottom:10px"><strong>Kasir:</strong> ${x.kasir}</div>
-<div style="margin-bottom:10px"><strong>Shift:</strong> ${x.shift}</div>
 
-<table>
-<thead>
-<tr>
-<th>Waktu</th>
-<th>Jenis</th>
-<th>Uraian</th>
-<th>Nominal</th>
-</tr>
-</thead>
-<tbody>
-${detail}
-</tbody>
-</table>
-</div>`;
+doc.setFontSize(18);
+doc.text('LAPORAN SHIFT SB TUGU',14,18);
 
-let area=document.getElementById('laporanArea');
-area.innerHTML=html;
 
+doc.setFontSize(11);
+doc.text('Tanggal : '+x.tanggal,14,28);
+doc.text('Jam Tutup : '+x.jam,14,35);
+doc.text('Kasir : '+x.kasir,14,42);
+doc.text('Shift : '+x.shift,14,49);
+
+
+doc.autoTable({
+startY:58,
+head:[['No','Waktu','Jenis','Uraian','Nominal']],
+body:rows,
+styles:{fontSize:9},
+headStyles:{fillColor:[37,99,235]}
 });
+
+let finalY=doc.lastAutoTable.finalY+10;
+
+doc.text('Total Tunai : Rp '+rupiah(x.tunai),14,finalY);
+doc.text('Total QRIS : Rp '+rupiah(x.qris),14,finalY+7);
+doc.text('Pengeluaran : Rp '+rupiah(x.pengeluaran),14,finalY+14);
+doc.text('Saldo : Rp '+rupiah(x.saldo),14,finalY+21);
+
+
+doc.save('Laporan-Shift-'+x.kasir+'.pdf');
+
+},{onlyOnce:true});
 }
 
 window.tutupShift=function(){
@@ -624,7 +630,7 @@ isi+=`
 <td>Rp ${rupiah(x.saldo)}</td>
 <td style="font-weight:bold;color:green">${x.status}</td>
 <td>
-<button class="action-btn edit-btn" onclick="lihatShift('${id}')">Lihat</button>
+<button class="action-btn edit-btn" onclick="downloadShiftPDF('${id}')">Download</button>
 </td>
 </tr>`;
 
