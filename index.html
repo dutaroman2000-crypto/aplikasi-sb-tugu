@@ -278,8 +278,24 @@ document.getElementById('mainApp').style.display='block';
 
 document.getElementById('infoKasir').innerHTML='Login : '+u.toUpperCase()+' | '+getShift();
 
+if(u==='owner'){
+document.getElementById('inputArea').classList.add('hidden');
+document.getElementById('dashboardKasirArea').classList.remove('hidden');
+}
+
 if(u!=='owner'){
-document.getElementById('btnTutupShiftTop').style.display='inline-block';
+let btn=document.getElementById('btnTutupShiftTop');
+if(btn){
+btn.style.display='inline-block';
+}
+}
+
+render();
+
+}else{
+alert('Username atau password salah');
+}
+
 }
 
 if(u==='owner'){
