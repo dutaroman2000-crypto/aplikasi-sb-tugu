@@ -266,41 +266,35 @@ return (jam>=6 && jam<18)?'Shift 1':'Shift 2';
 
 window.login=function(){
 
-let u=document.getElementById('username').value;
-let p=document.getElementById('password').value;
+const u=document.getElementById('username').value.trim().toLowerCase();
+const p=document.getElementById('password').value.trim();
 
-if(['owner','kasir1','kasir2','kasir3','kasir4'].includes(u) && p==='12345'){
+const users=['owner','kasir1','kasir2','kasir3','kasir4'];
+
+if(users.includes(u) && p==='12345'){
 
 userLogin=u;
 
-document.getElementById('loginPage').style.display='none';
-document.getElementById('mainApp').style.display='block';
+const loginPage=document.getElementById('loginPage');
+const mainApp=document.getElementById('mainApp');
 
-document.getElementById('infoKasir').innerHTML='Login : '+u.toUpperCase()+' | '+getShift();
+if(loginPage) loginPage.style.display='none';
+if(mainApp) mainApp.style.display='block';
+
+const info=document.getElementById('infoKasir');
+if(info){
+info.innerHTML='Login : '+u.toUpperCase()+' | '+getShift();
+}
 
 if(u==='owner'){
-document.getElementById('inputArea').classList.add('hidden');
-document.getElementById('dashboardKasirArea').classList.remove('hidden');
-}
+const inputArea=document.getElementById('inputArea');
+const dashboardArea=document.getElementById('dashboardKasirArea');
 
-if(u!=='owner'){
-let btn=document.getElementById('btnTutupShiftTop');
-if(btn){
-btn.style.display='inline-block';
-}
-}
-
-render();
-
+if(inputArea) inputArea.classList.add('hidden');
+if(dashboardArea) dashboardArea.classList.remove('hidden');
 }else{
-alert('Username atau password salah');
-}
-
-}
-
-if(u==='owner'){
-document.getElementById('inputArea').classList.add('hidden');
-document.getElementById('dashboardKasirArea').classList.remove('hidden');
+const btn=document.getElementById('btnTutupShiftTop');
+if(btn) btn.style.display='inline-block';
 }
 
 render();
