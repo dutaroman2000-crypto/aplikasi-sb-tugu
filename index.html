@@ -266,8 +266,10 @@ return (jam>=6 && jam<18)?'Shift 1':'Shift 2';
 
 window.login=function(){
 
-const u=document.getElementById('username').value.trim().toLowerCase();
-const p=document.getElementById('password').value.trim();
+try{
+
+const u=(document.getElementById('username')?.value || '').trim().toLowerCase();
+const p=(document.getElementById('password')?.value || '').trim();
 
 const users=['owner','kasir1','kasir2','kasir3','kasir4'];
 
@@ -286,14 +288,18 @@ if(info){
 info.innerHTML='Login : '+u.toUpperCase()+' | '+getShift();
 }
 
+const btn=document.getElementById('btnTutupShiftTop');
+
 if(u==='owner'){
 const inputArea=document.getElementById('inputArea');
 const dashboardArea=document.getElementById('dashboardKasirArea');
 
 if(inputArea) inputArea.classList.add('hidden');
 if(dashboardArea) dashboardArea.classList.remove('hidden');
+
+if(btn) btn.style.display='none';
+
 }else{
-const btn=document.getElementById('btnTutupShiftTop');
 if(btn) btn.style.display='inline-block';
 }
 
@@ -301,6 +307,11 @@ render();
 
 }else{
 alert('Username atau password salah');
+}
+
+}catch(err){
+console.error(err);
+alert('Terjadi error login');
 }
 
 }
