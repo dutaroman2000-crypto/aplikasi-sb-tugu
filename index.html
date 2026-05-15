@@ -266,52 +266,50 @@ return (jam>=6 && jam<18)?'Shift 1':'Shift 2';
 
 window.login=function(){
 
-try{
+const username=document.getElementById('username').value.trim().toLowerCase();
+const password=document.getElementById('password').value.trim();
 
-const u=(document.getElementById('username')?.value || '').trim().toLowerCase();
-const p=(document.getElementById('password')?.value || '').trim();
+const akun=['owner','kasir1','kasir2','kasir3','kasir4'];
 
-const users=['owner','kasir1','kasir2','kasir3','kasir4'];
+if(akun.includes(username) && password==='12345'){
 
-if(users.includes(u) && p==='12345'){
+userLogin=username;
 
-userLogin=u;
+// buka dashboard
 
-const loginPage=document.getElementById('loginPage');
-const mainApp=document.getElementById('mainApp');
+document.getElementById('loginPage').style.display='none';
+document.getElementById('mainApp').style.display='block';
 
-if(loginPage) loginPage.style.display='none';
-if(mainApp) mainApp.style.display='block';
+// info login
 
 const info=document.getElementById('infoKasir');
 if(info){
-info.innerHTML='Login : '+u.toUpperCase()+' | '+getShift();
+info.innerHTML='Login : '+username.toUpperCase()+' | '+getShift();
 }
 
-const btn=document.getElementById('btnTutupShiftTop');
+// owner
 
-if(u==='owner'){
+if(username==='owner'){
+
 const inputArea=document.getElementById('inputArea');
-const dashboardArea=document.getElementById('dashboardKasirArea');
+const dashboardKasirArea=document.getElementById('dashboardKasirArea');
+const btnTutup=document.getElementById('btnTutupShiftTop');
 
 if(inputArea) inputArea.classList.add('hidden');
-if(dashboardArea) dashboardArea.classList.remove('hidden');
-
-if(btn) btn.style.display='none';
+if(dashboardKasirArea) dashboardKasirArea.classList.remove('hidden');
+if(btnTutup) btnTutup.style.display='none';
 
 }else{
-if(btn) btn.style.display='inline-block';
+
+const btnTutup=document.getElementById('btnTutupShiftTop');
+if(btnTutup) btnTutup.style.display='inline-block';
+
 }
 
 render();
 
 }else{
 alert('Username atau password salah');
-}
-
-}catch(err){
-console.error(err);
-alert('Terjadi error login');
 }
 
 }
