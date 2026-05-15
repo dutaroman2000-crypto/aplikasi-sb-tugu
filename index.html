@@ -223,6 +223,55 @@ th{background:#eff6ff;color:#2563eb}
 </div>
 
 <script type="module">
+
+window.userLogin='';
+
+function prosesLogin(){
+
+const username=(document.getElementById('username')?.value || '').trim().toLowerCase();
+const password=(document.getElementById('password')?.value || '').trim();
+
+if(
+(username==='owner' || username==='kasir1' || username==='kasir2' || username==='kasir3' || username==='kasir4')
+&& password==='12345'
+){
+
+window.userLogin=username;
+
+const loginPage=document.getElementById('loginPage');
+const mainApp=document.getElementById('mainApp');
+const infoKasir=document.getElementById('infoKasir');
+const btnTutup=document.getElementById('btnTutupShiftTop');
+const inputArea=document.getElementById('inputArea');
+const dashboardKasirArea=document.getElementById('dashboardKasirArea');
+
+if(loginPage) loginPage.style.display='none';
+if(mainApp) mainApp.style.display='block';
+
+if(infoKasir){
+infoKasir.innerHTML='Login : '+username.toUpperCase();
+}
+
+if(username==='owner'){
+if(inputArea) inputArea.classList.add('hidden');
+if(dashboardKasirArea) dashboardKasirArea.classList.remove('hidden');
+if(btnTutup) btnTutup.style.display='none';
+}else{
+if(inputArea) inputArea.classList.remove('hidden');
+if(btnTutup) btnTutup.style.display='inline-block';
+}
+
+if(typeof render==='function'){
+render();
+}
+
+}else{
+alert('Username atau password salah');
+}
+
+}
+
+window.prosesLogin=prosesLogin;
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getDatabase, ref, push, onValue, remove, update } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
 
