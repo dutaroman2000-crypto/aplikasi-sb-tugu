@@ -49,7 +49,7 @@ th{background:#eff6ff;color:#2563eb}
 <div class="subtitle">Kasir Professional Firebase</div>
 <input type="text" id="username" placeholder="Username">
 <input type="password" id="password" placeholder="Password">
-<button type="button" class="login-btn" id="btnLogin">LOGIN</button>
+<button type="button" class="login-btn" onclick="prosesLogin()">LOGIN</button>
 </div>
 </div>
 
@@ -266,31 +266,27 @@ return (jam>=6 && jam<18)?'Shift 1':'Shift 2';
 
 function prosesLogin(){
 
-const username=document.getElementById('username').value.trim().toLowerCase();
-const password=document.getElementById('password').value.trim();
+var username=document.getElementById('username').value.trim().toLowerCase();
+var password=document.getElementById('password').value.trim();
 
-const daftarUser=['owner','kasir1','kasir2','kasir3','kasir4'];
-
-if(!daftarUser.includes(username) || password!=='12345'){
-alert('Username atau password salah');
-return;
-}
+if(
+(username==='owner' || username==='kasir1' || username==='kasir2' || username==='kasir3' || username==='kasir4')
+&& password==='12345'
+){
 
 userLogin=username;
 
-const loginPage=document.getElementById('loginPage');
-const mainApp=document.getElementById('mainApp');
-const infoKasir=document.getElementById('infoKasir');
-const inputArea=document.getElementById('inputArea');
-const dashboardKasirArea=document.getElementById('dashboardKasirArea');
-const btnTutup=document.getElementById('btnTutupShiftTop');
+document.getElementById('loginPage').style.display='none';
+document.getElementById('mainApp').style.display='block';
 
-if(loginPage) loginPage.style.display='none';
-if(mainApp) mainApp.style.display='block';
-
-if(infoKasir){
-infoKasir.innerHTML='Login : '+username.toUpperCase()+' | '+getShift();
+var info=document.getElementById('infoKasir');
+if(info){
+info.innerHTML='Login : '+username.toUpperCase()+' | '+getShift();
 }
+
+var btnTutup=document.getElementById('btnTutupShiftTop');
+var inputArea=document.getElementById('inputArea');
+var dashboardKasirArea=document.getElementById('dashboardKasirArea');
 
 if(username==='owner'){
 if(inputArea) inputArea.classList.add('hidden');
@@ -302,14 +298,12 @@ if(btnTutup) btnTutup.style.display='inline-block';
 }
 
 render();
+
+}else{
+alert('Username atau password salah');
 }
 
-document.addEventListener('DOMContentLoaded',()=>{
-const btn=document.getElementById('btnLogin');
-if(btn){
-btn.addEventListener('click',prosesLogin);
 }
-});
 
 window.logout=function(){
 location.reload();
