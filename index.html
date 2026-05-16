@@ -222,6 +222,9 @@ th{background:#eff6ff;color:#2563eb}
 
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
 <script>
 
 window.userLogin='';
@@ -285,6 +288,11 @@ appId:'1:953508498389:web:81b5720e8420a04cdb8b5c'
 
 firebase.initializeApp(firebaseConfig);
 const db=firebase.database();
+const ref=firebase.database().ref;
+const push=(r,data)=>r.push(data);
+const onValue=(r,cb)=>r.on('value',(snapshot)=>cb(snapshot));
+const remove=(r)=>r.remove();
+const update=(r,data)=>r.update(data);
 const db=getDatabase(firebaseApp);
 const transaksiRef=ref(db,'transaksi');
 const shiftRef=ref(db,'histori_shift');
