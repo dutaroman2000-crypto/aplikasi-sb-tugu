@@ -49,7 +49,7 @@ th{background:#eff6ff;color:#2563eb}
 <div class="subtitle">Kasir Professional Firebase</div>
 <input type="text" id="username" placeholder="Username">
 <input type="password" id="password" placeholder="Password">
-<button type="button" class="login-btn" onclick="prosesLogin()">LOGIN</button>
+<button class="login-btn" onclick="login()">LOGIN</button>
 </div>
 </div>
 
@@ -81,24 +81,6 @@ th{background:#eff6ff;color:#2563eb}
 
 <h2 style="margin-bottom:14px">Histori & Laporan Shift</h2>
 <div id="historiKasirArea" style="margin-bottom:15px"></div>
-
-<div class="section">
-<h2 style="margin-bottom:14px">LOG Aktivitas Kasir</h2>
-<div style="overflow:auto;">
-<table>
-<thead>
-<tr>
-<th>Kasir</th>
-<th>Aktivitas</th>
-<th>Sebelum</th>
-<th>Sesudah</th>
-<th>Waktu</th>
-</tr>
-</thead>
-<tbody id="logAktivitasBody"></tbody>
-</table>
-</div>
-</div>
 <div style="overflow:auto;margin-bottom:20px;">
 <table>
 <thead>
@@ -129,28 +111,28 @@ th{background:#eff6ff;color:#2563eb}
 <h3>Penjualan Tunai</h3>
 <input id="tunaiNominal" placeholder="Nominal">
 <input id="tunaiUraian" placeholder="Uraian">
-<button class="save-btn" onclick="simpanData('Tunai')">Simpan</button>
+<button class="save-btn" onclick="simpan('Tunai')">Simpan</button>
 </div>
 
 <div class="formbox">
 <h3>Penjualan QRIS</h3>
 <input id="qrisNominal" placeholder="Nominal">
 <input id="qrisUraian" placeholder="Uraian">
-<button class="save-btn" onclick="simpanData('QRIS')">Simpan</button>
+<button class="save-btn" onclick="simpan('QRIS')">Simpan</button>
 </div>
 
 <div class="formbox">
 <h3>Pengeluaran Umum</h3>
 <input id="pengeluaranNominal" placeholder="Nominal">
 <input id="pengeluaranUraian" placeholder="Uraian">
-<button class="save-btn" onclick="simpanData('Pengeluaran')">Simpan</button>
+<button class="save-btn" onclick="simpan('Pengeluaran')">Simpan</button>
 </div>
 
 <div class="formbox">
 <h3>Pengeluaran Tabungan</h3>
 <input id="tabunganNominal" placeholder="Nominal">
 <input id="tabunganUraian" placeholder="Uraian">
-<button class="save-btn" onclick="simpanData('Tabungan')">Simpan</button>
+<button class="save-btn" onclick="simpan('Tabungan')">Simpan</button>
 </div>
 
 </div>
@@ -222,10 +204,9 @@ th{background:#eff6ff;color:#2563eb}
 
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-
-<script>
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getDatabase, ref, push, onValue, remove, update } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
 
 const firebaseConfig={
 apiKey:'AIzaSyAy2SdCWzkWfldozz0cBRL_ifP00IFb3vo',
@@ -237,76 +218,57 @@ messagingSenderId:'953508498389',
 appId:'1:953508498389:web:81b5720e8420a04cdb8b5c'
 };
 
-firebase.initializeApp(firebaseConfig);
-const db=firebase.database();
-const transaksiRef=db.ref('transaksi');
-const shiftRef=db.ref('histori_shift');
-const logRef=db.ref('log_aktivitas');
+const firebaseApp=initializeApp(firebaseConfig);
+const db=getDatabase(firebaseApp);
+const transaksiRef=ref(db,'transaksi');
+const shiftRef=ref(db,'histori_shift');
 
+let transaksi=[];
+let transaksiFilter=[];
 let userLogin='';
+
+function rupiah(n){
+return Number(n||0).toLocaleString('id-ID');
+}
+
+function formatInput(id){
+document.getElementById(id).addEventListener('input',function(){
+let value=this.value.replace(/[^0-9]/g,'');
+this.value=value?Number(value).toLocaleString('id-ID'):'';
+});
+}
+
+['tunaiNominal','qrisNominal','pengeluaranNominal','tabunganNominal'].forEach(formatInput);
 
 function getShift(){
 let jam=new Date().getHours();
 return (jam>=6 && jam<18)?'Shift 1':'Shift 2';
 }
 
-function rupiah(angka){
-return Number(angka||0).toLocaleString('id-ID');
-}
+window.login=function(){
 
-function formatRibuan(id){
-const el=document.getElementById(id);
-if(!el) return;
+let u=document.getElementById('username').value;
+let p=document.getElementById('password').value;
 
-el.addEventListener('input',function(){
-let value=this.value.replace(/[^0-9]/g,'');
-this.value=value?Number(value).toLocaleString('id-ID'):'';
-});
-}
+if(['owner','kasir1','kasir2','kasir3','kasir4'].includes(u) && p==='12345'){
 
-setTimeout(()=>{
-formatRibuan('tunaiNominal');
-formatRibuan('qrisNominal');
-formatRibuan('pengeluaranNominal');
-formatRibuan('tabunganNominal');
-},500);
-
-function prosesLogin(){
-
-let username=document.getElementById('username').value.trim().toLowerCase();
-let password=document.getElementById('password').value.trim();
-
-if(
-(username==='owner' || username==='kasir1' || username==='kasir2' || username==='kasir3' || username==='kasir4')
-&& password==='12345'
-){
-
-userLogin=username;
+userLogin=u;
 
 document.getElementById('loginPage').style.display='none';
 document.getElementById('mainApp').style.display='block';
 
-let info=document.getElementById('infoKasir');
-if(info){
-info.innerHTML='Login : '+username.toUpperCase()+' | '+getShift();
+document.getElementById('infoKasir').innerHTML='Login : '+u.toUpperCase()+' | '+getShift();
+
+if(u!=='owner'){
+document.getElementById('btnTutupShiftTop').style.display='inline-block';
 }
 
-let btn=document.getElementById('btnTutupShiftTop');
-let inputArea=document.getElementById('inputArea');
-let dashboard=document.getElementById('dashboardKasirArea');
-
-if(username==='owner'){
-if(inputArea) inputArea.classList.add('hidden');
-if(dashboard) dashboard.classList.remove('hidden');
-if(btn) btn.style.display='none';
-}else{
-if(inputArea) inputArea.classList.remove('hidden');
-if(btn) btn.style.display='inline-block';
+if(u==='owner'){
+document.getElementById('inputArea').classList.add('hidden');
+document.getElementById('dashboardKasirArea').classList.remove('hidden');
 }
 
-if(typeof render==='function'){
 render();
-}
 
 }else{
 alert('Username atau password salah');
@@ -314,59 +276,52 @@ alert('Username atau password salah');
 
 }
 
-function logout(){
+window.logout=function(){
 location.reload();
 }
 
-window.prosesLogin=prosesLogin;
-window.logout=logout;
-
-function simpanData(jenis){
-
+window.simpan=function(jenis){
 let nominal=0;
 let uraian='';
 
 if(jenis==='Tunai'){
-nominal=document.getElementById('tunaiNominal').value;
-uraian=document.getElementById('tunaiUraian').value;
-document.getElementById('tunaiNominal').value='';
-document.getElementById('tunaiUraian').value='';
+nominal=tunaiNominal.value;
+uraian=tunaiUraian.value;
+tunaiNominal.value='';
+tunaiUraian.value='';
 }
 
 if(jenis==='QRIS'){
-nominal=document.getElementById('qrisNominal').value;
-uraian=document.getElementById('qrisUraian').value;
-document.getElementById('qrisNominal').value='';
-document.getElementById('qrisUraian').value='';
+nominal=qrisNominal.value;
+uraian=qrisUraian.value;
+qrisNominal.value='';
+qrisUraian.value='';
 }
 
 if(jenis==='Pengeluaran'){
-nominal=document.getElementById('pengeluaranNominal').value;
-uraian=document.getElementById('pengeluaranUraian').value;
-document.getElementById('pengeluaranNominal').value='';
-document.getElementById('pengeluaranUraian').value='';
+nominal=pengeluaranNominal.value;
+uraian=pengeluaranUraian.value;
+pengeluaranNominal.value='';
+pengeluaranUraian.value='';
 }
 
 if(jenis==='Tabungan'){
-nominal=document.getElementById('tabunganNominal').value;
-uraian=document.getElementById('tabunganUraian').value;
-document.getElementById('tabunganNominal').value='';
-document.getElementById('tabunganUraian').value='';
+nominal=tabunganNominal.value;
+uraian=tabunganUraian.value;
+tabunganNominal.value='';
+tabunganUraian.value='';
 }
 
 nominal=Number(String(nominal).replace(/\./g,''));
 
-transaksiRef.push({
+push(transaksiRef,{
 waktu:Date.now(),
 kasir:userLogin,
-jenis:jenis,
-uraian:uraian,
-nominal:nominal
+jenis,
+uraian,
+nominal
 });
-
 }
-
-window.simpanData=simpanData;
 
 onValue(transaksiRef,(snapshot)=>{
 let data=snapshot.val()||{};
@@ -376,11 +331,558 @@ Object.keys(data).forEach(id=>{
 transaksi.push({id,...data[id]});
 });
 
-if(typeof render==='function'){
 render();
-}
 });
 
+window.filterData=function(){
+render();
+}
+
+window.laporanHariIni=function(){
+
+let hariIni=new Date();
+let yyyy=hariIni.getFullYear();
+let mm=String(hariIni.getMonth()+1).padStart(2,'0');
+let dd=String(hariIni.getDate()).padStart(2,'0');
+
+let tgl=yyyy+'-'+mm+'-'+dd;
+
+document.getElementById('tglAwal').value=tgl;
+document.getElementById('tglAkhir').value=tgl;
+
+render();
+}
+
+window.ubahData=function(id){
+
+let trx=transaksi.find(x=>x.id===id);
+
+let baru=prompt('Nominal baru',trx.nominal);
+
+if(baru){
+
+push(ref(db,'log_aktivitas'),{
+kasir:userLogin,
+aktivitas:'UBAH',
+nominalLama:trx.nominal,
+nominalBaru:Number(baru),
+waktu:new Date().toLocaleString('id-ID')
+});
+
+update(ref(db,'transaksi/'+id),{nominal:Number(baru)});
+
+}
+
+}
+
+window.hapusData=function(id){
+
+let trx=transaksi.find(x=>x.id===id);
+
+push(ref(db,'log_aktivitas'),{
+kasir:userLogin,
+aktivitas:'HAPUS',
+nominalLama:trx.nominal,
+nominalBaru:0,
+waktu:new Date().toLocaleString('id-ID')
+});
+
+remove(ref(db,'transaksi/'+id));
+}
+
+window.downloadShiftPDF=function(id){
+
+onValue(ref(db,'histori_shift/'+id),(snapshot)=>{
+
+let x=snapshot.val();
+
+if(!x) return;
+
+const { jsPDF } = window.jspdf;
+const doc = new jsPDF();
+
+let rows=[];
+
+(x.detailTransaksi||[]).forEach((trx,index)=>{
+rows.push([
+index+1,
+new Date(Number(trx.waktu)).toLocaleString('id-ID'),
+trx.jenis,
+trx.uraian,
+'Rp '+rupiah(trx.nominal)
+]);
+});
+
+
+doc.setFontSize(18);
+doc.text('LAPORAN SHIFT SB TUGU',14,18);
+
+
+doc.setFontSize(11);
+doc.text('Tanggal : '+x.tanggal,14,28);
+doc.text('Jam Tutup : '+x.jam,14,35);
+doc.text('Kasir : '+x.kasir,14,42);
+doc.text('Shift : '+x.shift,14,49);
+
+
+doc.autoTable({
+startY:58,
+head:[['No','Waktu','Jenis','Uraian','Nominal']],
+body:rows,
+styles:{fontSize:9},
+headStyles:{fillColor:[37,99,235]}
+});
+
+let finalY=doc.lastAutoTable.finalY+10;
+
+doc.text('Total Tunai : Rp '+rupiah(x.tunai),14,finalY);
+doc.text('Total QRIS : Rp '+rupiah(x.qris),14,finalY+7);
+doc.text('Pengeluaran : Rp '+rupiah(x.pengeluaran),14,finalY+14);
+doc.text('Saldo : Rp '+rupiah(x.saldo),14,finalY+21);
+
+
+doc.save('Laporan-Shift-'+x.kasir+'.pdf');
+
+},{onlyOnce:true});
+}
+
+window.tutupShift=function(){
+
+if(userLogin==='owner') return;
+
+let shift=getShift();
+
+let data=transaksi.filter(x=>x.kasir===userLogin);
+
+let tunai=0,qris=0,pengeluaran=0,tabungan=0;
+
+data.forEach(x=>{
+if(x.jenis==='Tunai')tunai+=x.nominal;
+if(x.jenis==='QRIS')qris+=x.nominal;
+if(x.jenis==='Pengeluaran')pengeluaran+=x.nominal;
+if(x.jenis==='Tabungan')tabungan+=x.nominal;
+});
+
+let saldo=tunai-pengeluaran-tabungan;
+
+push(shiftRef,{
+tanggal:new Date().toLocaleDateString('id-ID'),
+jam:new Date().toLocaleTimeString('id-ID'),
+shift,
+kasir:userLogin,
+tunai,
+qris,
+pengeluaran,
+saldo,
+status:'SUDAH TUTUP SHIFT',
+detailTransaksi:data
+});
+
+data.forEach(x=>{
+remove(ref(db,'transaksi/'+x.id));
+});
+
+alert('Shift berhasil ditutup dan transaksi berhasil direset');
+}
+
+function render(){
+
+let data=userLogin==='owner'
+? transaksi
+: transaksi.filter(x=>x.kasir===userLogin);
+
+let tglAwal=document.getElementById('tglAwal')?.value;
+let tglAkhir=document.getElementById('tglAkhir')?.value;
+let filterKasir=document.getElementById('filterKasir')?.value;
+
+if(filterKasir){
+data=data.filter(x=>x.kasir===filterKasir);
+}
+
+if(tglAwal){
+data=data.filter(x=>{
+let t=new Date(x.waktu);
+return t>=new Date(tglAwal);
+});
+}
+
+if(tglAkhir){
+data=data.filter(x=>{
+let t=new Date(x.waktu);
+let akhir=new Date(tglAkhir);
+akhir.setHours(23,59,59,999);
+return t<=akhir;
+});
+}
+
+transaksiFilter=data;
+
+let tunai=0,qris=0,pengeluaran=0,tabungan=0;
+let isi='';
+
+data.forEach(x=>{
+
+if(x.jenis==='Tunai')tunai+=x.nominal;
+if(x.jenis==='QRIS')qris+=x.nominal;
+if(x.jenis==='Pengeluaran')pengeluaran+=x.nominal;
+if(x.jenis==='Tabungan')tabungan+=x.nominal;
+
+let aksi='-';
+
+if(userLogin==='owner'){
+aksi=`
+<button class="action-btn edit-btn" onclick="ubahData('${x.id}')">Ubah</button>
+<button class="action-btn delete-btn" onclick="hapusData('${x.id}')">Hapus</button>
+`;
+}
+
+if(userLogin===x.kasir){
+
+let historyKasir=data.filter(y=>y.kasir===userLogin);
+
+let posisi=historyKasir.findIndex(y=>y.id===x.id);
+
+if(posisi<5){
+aksi=`
+<button class="action-btn edit-btn" onclick="ubahData('${x.id}')">Ubah</button>
+<button class="action-btn delete-btn" onclick="hapusData('${x.id}')">Hapus</button>
+`;
+}
+}
+
+isi+=`<tr>
+<td>${new Date(Number(x.waktu)).toLocaleString('id-ID')}</td>
+<td>${x.kasir}</td>
+<td>${x.jenis}</td>
+<td>${x.uraian}</td>
+<td>Rp ${rupiah(x.nominal)}</td>
+<td>${aksi}</td>
+</tr>`;
+});
+
+
+document.getElementById('totalTunai').innerHTML='Rp '+rupiah(tunai);
+document.getElementById('totalQris').innerHTML='Rp '+rupiah(qris);
+document.getElementById('totalPengeluaran').innerHTML='Rp '+rupiah(pengeluaran);
+document.getElementById('totalTabungan').innerHTML='Rp '+rupiah(tabungan);
+document.getElementById('totalTransaksi').innerHTML=data.length;
+document.getElementById('saldo').innerHTML='Rp '+rupiah(tunai-pengeluaran-tabungan);
+document.getElementById('history').innerHTML=isi;
+
+let laporanTunai=data.filter(x=>x.jenis==='Tunai').sort((a,b)=>a.waktu-b.waktu);
+let laporanQris=data.filter(x=>x.jenis==='QRIS').sort((a,b)=>a.waktu-b.waktu);
+let laporanPengeluaran=data.filter(x=>x.jenis==='Pengeluaran').sort((a,b)=>a.waktu-b.waktu);
+let laporanTabungan=data.filter(x=>x.jenis==='Tabungan').sort((a,b)=>a.waktu-b.waktu);
+
+let htmlTunai='';
+let htmlQris='';
+let htmlPengeluaran='';
+let htmlTabungan='';
+
+laporanTunai.forEach(x=>{
+htmlTunai+=`<tr>
+<td>${new Date(Number(x.waktu)).toLocaleString('id-ID')}</td>
+<td>${x.uraian}</td>
+<td>Rp ${rupiah(x.nominal)}</td>
+</tr>`;
+});
+
+laporanQris.forEach(x=>{
+htmlQris+=`<tr>
+<td>${new Date(Number(x.waktu)).toLocaleString('id-ID')}</td>
+<td>${x.uraian}</td>
+<td>Rp ${rupiah(x.nominal)}</td>
+</tr>`;
+});
+
+laporanPengeluaran.forEach(x=>{
+htmlPengeluaran+=`<tr>
+<td>${new Date(Number(x.waktu)).toLocaleString('id-ID')}</td>
+<td>${x.uraian}</td>
+<td>- Rp ${rupiah(x.nominal)}</td>
+</tr>`;
+});
+
+laporanTabungan.forEach(x=>{
+htmlTabungan+=`<tr>
+<td>${new Date(Number(x.waktu)).toLocaleString('id-ID')}</td>
+<td>${x.uraian}</td>
+<td>- Rp ${rupiah(x.nominal)}</td>
+</tr>`;
+});
+
+let laporanHTML=`
+<div class="section">
+<h2 style="margin-bottom:15px">Laporan Penjualan Tunai</h2>
+<table>
+<thead>
+<tr>
+<th>Waktu</th>
+<th>Uraian</th>
+<th>Nominal</th>
+</tr>
+</thead>
+<tbody>${htmlTunai}</tbody>
+</table>
+</div>
+
+<div class="section">
+<h2 style="margin-bottom:15px">Laporan Penjualan QRIS</h2>
+<table>
+<thead>
+<tr>
+<th>Waktu</th>
+<th>Uraian</th>
+<th>Nominal</th>
+</tr>
+</thead>
+<tbody>${htmlQris}</tbody>
+</table>
+</div>
+
+<div class="section">
+<h2 style="margin-bottom:15px">Pengeluaran Umum</h2>
+<table>
+<thead>
+<tr>
+<th>Waktu</th>
+<th>Uraian</th>
+<th>Nominal</th>
+</tr>
+</thead>
+<tbody>${htmlPengeluaran}</tbody>
+</table>
+</div>
+
+<div class="section">
+<h2 style="margin-bottom:15px">Tabungan</h2>
+<table>
+<thead>
+<tr>
+<th>Waktu</th>
+<th>Uraian</th>
+<th>Nominal</th>
+</tr>
+</thead>
+<tbody>${htmlTabungan}</tbody>
+</table>
+</div>
+
+<div class="section">
+<h2>Saldo Uang Tunai : Rp ${rupiah(tunai-pengeluaran-tabungan)}</h2>
+</div>
+`;
+
+if(userLogin==='owner'){
+
+let laporanKasir='';
+
+['kasir1','kasir2','kasir3','kasir4'].forEach(kasir=>{
+
+let dataKasir=data.filter(x=>x.kasir===kasir);
+
+let totalKasir=dataKasir.reduce((a,b)=>a+b.nominal,0);
+
+laporanKasir+=`
+<div class="card">
+<small>${kasir.toUpperCase()}</small>
+<h2>Rp ${rupiah(totalKasir)}</h2>
+<div>${dataKasir.length} transaksi</div>
+</div>`;
+
+});
+
+laporanHTML+=`<div class="section"><h3 style="margin-bottom:15px">Rekap Per Kasir</h3><div class="cards">${laporanKasir}</div></div>`;
+}
+
+document.getElementById('laporanArea').innerHTML=laporanHTML;
+
+renderDashboardKasir();
+renderShiftAktif();
+}
+
+function renderShiftAktif(){
+
+if(userLogin!=='owner') return;
+
+let html='';
+
+['kasir1','kasir2','kasir3','kasir4'].forEach(kasir=>{
+
+let shift=getShift();
+
+let aktif=transaksi.some(x=>x.kasir===kasir);
+
+html+=`
+<div class="card">
+<h3 style="margin-bottom:10px">${kasir.toUpperCase()}</h3>
+<div><strong>Status :</strong> ${aktif?'AKTIF':'TIDAK AKTIF'}</div>
+</div>`;
+
+});
+
+document.getElementById('shiftAktifArea').innerHTML=html;
+
+onValue(shiftRef,(snapshot)=>{
+
+let data=snapshot.val()||{};
+
+let isi='';
+
+Object.keys(data).reverse().forEach(id=>{
+
+let x=data[id];
+
+isi+=`
+<tr>
+<td>${x.tanggal}</td>
+<td>${x.jam}</td>
+<td>${x.shift}</td>
+<td>${x.kasir}</td>
+<td>Rp ${rupiah(x.tunai)}</td>
+<td>Rp ${rupiah(x.qris)}</td>
+<td>Rp ${rupiah(x.pengeluaran)}</td>
+<td>Rp ${rupiah(x.saldo)}</td>
+<td style="font-weight:bold;color:green">${x.status}</td>
+<td>
+<button class="action-btn edit-btn" onclick="downloadShiftPDF('${id}')">Download</button>
+</td>
+</tr>`;
+
+});
+
+document.getElementById('shiftHistory').innerHTML=isi;
+
+});
+}
+
+function renderDashboardKasir(){
+if(userLogin!=='owner')return;
+
+let html='';
+
+['kasir1','kasir2','kasir3','kasir4'].forEach(kasir=>{
+
+let dataKasir=transaksi.filter(x=>x.kasir===kasir);
+
+let totalTunaiKasir=0;
+let totalQrisKasir=0;
+let totalPengeluaranKasir=0;
+let totalTabunganKasir=0;
+
+dataKasir.forEach(x=>{
+if(x.jenis==='Tunai') totalTunaiKasir+=x.nominal;
+if(x.jenis==='QRIS') totalQrisKasir+=x.nominal;
+if(x.jenis==='Pengeluaran') totalPengeluaranKasir+=x.nominal;
+if(x.jenis==='Tabungan') totalTabunganKasir+=x.nominal;
+});
+
+html+=`
+<div class="card">
+<h2 style="margin-bottom:14px">${kasir.toUpperCase()}</h2>
+<div style="margin-bottom:8px"><strong>Total Tunai :</strong> Rp ${rupiah(totalTunaiKasir)}</div>
+<div style="margin-bottom:8px"><strong>Total QRIS :</strong> Rp ${rupiah(totalQrisKasir)}</div>
+<div style="margin-bottom:8px"><strong>Pengeluaran Umum :</strong> Rp ${rupiah(totalPengeluaranKasir)}</div>
+<div><strong>Pengeluaran Tabungan :</strong> Rp ${rupiah(totalTabunganKasir)}</div>
+</div>`;
+
+});
+
+
+document.getElementById('dashboardKasir').innerHTML=html;
+}
+
+window.cetakLaporan=function(){
+
+let area=document.getElementById('laporanArea').innerHTML;
+
+let win=window.open('','','width=1000,height=700');
+
+win.document.write(`
+<html>
+<head>
+<title>Laporan SB TUGU</title>
+<style>
+body{font-family:Arial;padding:20px}
+table{width:100%;border-collapse:collapse;margin-bottom:20px}
+th,td{border:1px solid #ccc;padding:8px;text-align:left}
+th{background:#eee}
+</style>
+</head>
+<body>
+${area}
+</body>
+</html>
+`);
+
+win.document.close();
+}
+
+window.downloadPDF=function(){
+
+const { jsPDF } = window.jspdf;
+const doc = new jsPDF();
+
+let rows=[];
+let totalTunai=0;
+let totalQris=0;
+let totalPengeluaran=0;
+let totalTabungan=0;
+
+transaksiFilter.forEach((x,index)=>{
+
+if(x.jenis==='Tunai') totalTunai+=x.nominal;
+if(x.jenis==='QRIS') totalQris+=x.nominal;
+if(x.jenis==='Pengeluaran') totalPengeluaran+=x.nominal;
+if(x.jenis==='Tabungan') totalTabungan+=x.nominal;
+
+rows.push([
+index+1,
+new Date(Number(x.waktu)).toLocaleString('id-ID'),
+x.kasir,
+x.jenis,
+x.uraian,
+'Rp '+rupiah(x.nominal)
+]);
+});
+
+let saldo=totalTunai-totalPengeluaran-totalTabungan;
+
+let tglAwal=document.getElementById('tglAwal').value || '-';
+let tglAkhir=document.getElementById('tglAkhir').value || '-';
+let kasir=document.getElementById('filterKasir').value || 'Semua';
+
+
+doc.setFontSize(18);
+doc.text('LAPORAN SB TUGU',14,18);
+
+
+doc.setFontSize(11);
+doc.text('Periode : '+tglAwal+' s/d '+tglAkhir,14,28);
+doc.text('Kasir : '+kasir,14,35);
+
+
+doc.autoTable({
+startY:45,
+head:[['No','Waktu','Kasir','Jenis','Uraian','Nominal']],
+body:rows,
+styles:{fontSize:9},
+headStyles:{fillColor:[37,99,235]}
+});
+
+let finalY=doc.lastAutoTable.finalY+10;
+
+doc.text('Total Tunai : Rp '+rupiah(totalTunai),14,finalY);
+doc.text('Total QRIS : Rp '+rupiah(totalQris),14,finalY+7);
+doc.text('Total Pengeluaran : Rp '+rupiah(totalPengeluaran),14,finalY+14);
+doc.text('Total Tabungan : Rp '+rupiah(totalTabungan),14,finalY+21);
+doc.text('Saldo Tunai : Rp '+rupiah(saldo),14,finalY+28);
+
+
+doc.save('Laporan-SB-TUGU.pdf');
+}
+
 </script>
+
 </body>
 </html>
