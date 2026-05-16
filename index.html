@@ -239,6 +239,9 @@ appId:'1:953508498389:web:81b5720e8420a04cdb8b5c'
 
 firebase.initializeApp(firebaseConfig);
 const db=firebase.database();
+const transaksiRef=db.ref('transaksi');
+const shiftRef=db.ref('histori_shift');
+const logRef=db.ref('log_aktivitas');
 
 let userLogin='';
 
@@ -246,6 +249,27 @@ function getShift(){
 let jam=new Date().getHours();
 return (jam>=6 && jam<18)?'Shift 1':'Shift 2';
 }
+
+function rupiah(angka){
+return Number(angka||0).toLocaleString('id-ID');
+}
+
+function formatRibuan(id){
+const el=document.getElementById(id);
+if(!el) return;
+
+el.addEventListener('input',function(){
+let value=this.value.replace(/[^0-9]/g,'');
+this.value=value?Number(value).toLocaleString('id-ID'):'';
+});
+}
+
+setTimeout(()=>{
+formatRibuan('tunaiNominal');
+formatRibuan('qrisNominal');
+formatRibuan('pengeluaranNominal');
+formatRibuan('tabunganNominal');
+},500);
 
 function prosesLogin(){
 
@@ -296,6 +320,66 @@ location.reload();
 
 window.prosesLogin=prosesLogin;
 window.logout=logout;
+
+function simpanData(jenis){
+
+let nominal=0;
+let uraian='';
+
+if(jenis==='Tunai'){
+nominal=document.getElementById('tunaiNominal').value;
+uraian=document.getElementById('tunaiUraian').value;
+document.getElementById('tunaiNominal').value='';
+document.getElementById('tunaiUraian').value='';
+}
+
+if(jenis==='QRIS'){
+nominal=document.getElementById('qrisNominal').value;
+uraian=document.getElementById('qrisUraian').value;
+document.getElementById('qrisNominal').value='';
+document.getElementById('qrisUraian').value='';
+}
+
+if(jenis==='Pengeluaran'){
+nominal=document.getElementById('pengeluaranNominal').value;
+uraian=document.getElementById('pengeluaranUraian').value;
+document.getElementById('pengeluaranNominal').value='';
+document.getElementById('pengeluaranUraian').value='';
+}
+
+if(jenis==='Tabungan'){
+nominal=document.getElementById('tabunganNominal').value;
+uraian=document.getElementById('tabunganUraian').value;
+document.getElementById('tabunganNominal').value='';
+document.getElementById('tabunganUraian').value='';
+}
+
+nominal=Number(String(nominal).replace(/\./g,''));
+
+transaksiRef.push({
+waktu:Date.now(),
+kasir:userLogin,
+jenis:jenis,
+uraian:uraian,
+nominal:nominal
+});
+
+}
+
+window.simpanData=simpanData;
+
+onValue(transaksiRef,(snapshot)=>{
+let data=snapshot.val()||{};
+transaksi=[];
+
+Object.keys(data).forEach(id=>{
+transaksi.push({id,...data[id]});
+});
+
+if(typeof render==='function'){
+render();
+}
+});
 
 </script>
 </body>
